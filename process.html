@@ -73,7 +73,7 @@ span.ko,span.en{display:none;}
 <div class="main" id="steps-main"></div>
 <a class="float-btn" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
 <script>
-const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5ZXVteHRlbWZta2JwdmlleGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MDMwMjgsImV4cCI6MjA1ODE3OTAyOH0.tFJdKCexkXwMEAimkRjfRi1f2eoT0DLrFxHHMbdDQaY');
+const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','sb_publishable_TuH7QP5ejpplWGn9OiSz3w_joV0ffWJ');
 let LANG=localStorage.getItem('homes-lang')||'ko';
 function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}

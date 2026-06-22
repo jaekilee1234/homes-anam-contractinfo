@@ -314,7 +314,12 @@ async function deleteItem(id,i){await SB.from('anam_detail_items').delete().eq('
 async function moveItem(i,dir){const n=i+dir;if(n<0||n>=itemsData.length)return;[itemsData[i].sort_order,itemsData[n].sort_order]=[itemsData[n].sort_order,itemsData[i].sort_order];await SB.from('anam_detail_items').update({sort_order:itemsData[i].sort_order}).eq('id',itemsData[i].id);await SB.from('anam_detail_items').update({sort_order:itemsData[n].sort_order}).eq('id',itemsData[n].id);[itemsData[i],itemsData[n]]=[itemsData[n],itemsData[i]];renderItems();}
 
 /* ── INIT ── */
-loadPopup();loadYT();loadInfo();loadSpaces();loadRooms();loadSteps();loadCols();loadItems();
+async function init(){
+  await Promise.all([loadPopup(),loadYT(),loadInfo(),loadSpaces(),loadRooms(),loadSteps()]);
+  await loadCols();
+  await loadItems();
+}
+init();
 </script>
 </body>
 </html>

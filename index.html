@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOMES Anam | 홈즈 안암</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f6f7f9;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:#fff;color:var(--navy);}
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--line);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;}
+.nav-logo{font-weight:800;font-size:20px;letter-spacing:-0.03em;color:var(--navy);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gray);text-decoration:none;transition:.15s;font-family:var(--font);}
+.nav-link:hover{background:var(--soft);color:var(--navy);}
+.nav-link.active{color:var(--navy);}
+.lang-toggle{display:flex;gap:3px;background:var(--soft);border-radius:8px;padding:3px;margin-left:8px;}
+.lang-btn{padding:5px 12px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--gray);cursor:pointer;transition:.15s;}
+.lang-btn.active{background:var(--navy);color:#fff;}
+/* POPUP */
+.popup-overlay{position:fixed;inset:0;background:rgba(2,4,37,.55);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;}
+.popup-overlay.open{opacity:1;pointer-events:auto;}
+.popup-box{background:#fff;border-radius:18px;overflow:hidden;width:min(480px,92vw);position:relative;box-shadow:0 20px 60px rgba(2,4,37,.25);}
+.popup-slide{display:none;}.popup-slide.active{display:block;}
+.popup-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
+.popup-ph{width:100%;aspect-ratio:4/3;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:14px;font-weight:600;}
+.popup-dots{display:flex;justify-content:center;gap:6px;padding:12px 0 4px;}
+.popup-dot{width:7px;height:7px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:.15s;}
+.popup-dot.active{background:var(--navy);}
+.popup-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 18px 16px;}
+.popup-close{font-family:var(--font);font-size:13px;font-weight:600;color:var(--gray);background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:7px;}
+.popup-close:hover{background:var(--soft);}
+.popup-today{font-size:12px;color:var(--gray);display:flex;align-items:center;gap:6px;cursor:pointer;}
+/* SECTIONS */
+.section{padding:64px 0;}
+.inner{max-width:1080px;margin:0 auto;padding:0 32px;}
+.s-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:8px;}
+.s-title{font-size:26px;font-weight:800;line-height:1.3;margin-bottom:6px;}
+.s-sub{font-size:14px;color:var(--gray);line-height:1.6;}
+/* YT */
+.yt-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:16px;background:var(--navy);}
+.yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+/* INFO TABLE */
+.tbl-wrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:28px;}
+.info-tbl{width:100%;border-collapse:collapse;}
+.info-tbl tr{border-bottom:1px solid var(--line);}
+.info-tbl tr:last-child{border-bottom:none;}
+.info-tbl td{padding:13px 16px;font-size:13.5px;line-height:1.5;vertical-align:top;}
+.info-tbl td.lbl{width:150px;font-weight:700;background:var(--soft);border-right:1px solid var(--line);}
+.info-tbl td.lbl2{width:150px;font-weight:700;background:var(--soft);border-right:1px solid var(--line);border-left:1px solid var(--line);}
+/* SPACES */
+.space-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;}
+.space-tab{padding:7px 18px;border-radius:20px;border:1px solid var(--line);font-family:var(--font);font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;background:#fff;transition:.15s;}
+.space-tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+.space-content{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;}
+.space-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;}
+.space-ph{width:100%;aspect-ratio:4/3;background:var(--cream);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:13px;}
+.space-name{font-size:22px;font-weight:800;margin-bottom:12px;}
+.space-desc{font-size:14px;color:#3a3f52;line-height:1.8;margin-bottom:16px;}
+.space-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.space-tag{padding:4px 12px;border-radius:6px;background:var(--soft);font-size:12px;font-weight:600;color:var(--gray);}
+/* ROOMS */
+.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px;}
+.room-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative;}
+.room-slide-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--cream);}
+.room-slide-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .35s;}
+.room-slide-img.active{opacity:1;}
+.room-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:13px;position:absolute;inset:0;}
+.slide-btn{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:16px;z-index:2;color:var(--navy);}
+.slide-btn.prev{left:8px;}.slide-btn.next{right:8px;}
+.room-badges{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;z-index:3;}
+.badge-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.badge-tour{background:var(--navy);color:#fff;}
+.badge-contract{background:var(--gold);color:var(--navy);}
+.room-body{padding:18px 20px 20px;}
+.room-type{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.room-name{font-size:17px;font-weight:800;margin-bottom:14px;}
+.room-price{font-size:20px;font-weight:800;}
+.room-deposit{font-size:12px;color:var(--gray);margin-top:2px;}
+.room-hr{border:none;border-top:1px solid var(--line);margin:14px 0;}
+.room-detail{display:flex;gap:8px;font-size:12.5px;color:var(--gray);margin-bottom:6px;}
+.room-detail span{font-weight:700;color:var(--navy);min-width:56px;flex-shrink:0;}
+/* FLOAT */
+.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(2,4,37,.2);}
+.float-btn:hover{background:#0a1050;}
+/* LANG */
+.ko,.en{display:none;}
+.lang-ko .ko{display:block;}
+.lang-en .en{display:block;}
+span.ko,span.en{display:none;}
+.lang-ko span.ko{display:inline;}
+.lang-en span.en{display:inline;}
+@media(max-width:720px){
+  nav{padding:0 16px;}
+  .inner{padding:0 16px;}
+  .section{padding:44px 0;}
+  .space-content{grid-template-columns:1fr;}
+  .rooms-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body class="lang-ko">
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <div id="popup-slides"></div>
+    <div class="popup-dots" id="popup-dots"></div>
+    <div class="popup-footer">
+      <label class="popup-today"><input type="checkbox" id="popup-today-chk" onchange="popupSkipToday()"><span class="ko">오늘 하루 보지 않기</span><span class="en">Don't show today</span></label>
+      <button class="popup-close" onclick="closePopup()"><span class="ko">닫기</span><span class="en">Close</span> ✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">HOMES <span>Anam</span></a>
+  <div class="nav-links">
+    <a class="nav-link active" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
+    <a class="nav-link" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
+    <a class="nav-link" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ① YOUTUBE -->
+<section class="section" style="background:var(--navy);padding:48px 0;">
+  <div class="inner">
+    <div class="s-label" style="color:rgba(255,255,255,.4);">HOMES Anam</div>
+    <div class="s-title" style="color:#fff;margin-bottom:24px;"><span class="ko">영상으로 만나보세요</span><span class="en">See it in action</span></div>
+    <div class="yt-wrap"><iframe id="yt-frame" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+  </div>
+</section>
+
+<!-- ② 기본정보 -->
+<section class="section" style="background:var(--soft);">
+  <div class="inner">
+    <div class="s-label">Basic Info</div>
+    <div class="s-title ko">기본 정보</div>
+    <div class="s-title en">Property Information</div>
+    <div class="tbl-wrap"><table class="info-tbl" id="info-tbl"></table></div>
+  </div>
+</section>
+
+<!-- ③ 공용공간 -->
+<section class="section">
+  <div class="inner">
+    <div class="s-label">Coliving Space</div>
+    <div class="s-title ko">입주민을 위한 공유 공간</div>
+    <div class="s-title en">Shared Spaces for Residents</div>
+    <div class="space-tabs" id="space-tabs"></div>
+    <div class="space-content" id="space-content"></div>
+  </div>
+</section>
+
+<!-- ④ 호실 카드 -->
+<section class="section" style="background:var(--soft);">
+  <div class="inner">
+    <div class="s-label">Room Types</div>
+    <div class="s-title ko">호실 타입 및 가격</div>
+    <div class="s-title en">Room Types & Pricing</div>
+    <div class="rooms-grid" id="rooms-grid"></div>
+  </div>
+</section>
+
+<!-- FLOAT -->
+<a class="float-btn" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
+
+<script>
+const D=JSON.parse(localStorage.getItem('homes_data')||'null')||getDefault();
+let LANG=localStorage.getItem('homes-lang')||'ko';
+let popIdx=0;
+
+// ── LANG ──
+function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
+
+// ── POPUP ──
+function renderPopup(){
+  const slides=D.popup||[];
+  const skip=localStorage.getItem('homes_popup_skip');
+  if(skip&&new Date(skip)>new Date())return;
+  if(!slides.length)return;
+  document.getElementById('popup-slides').innerHTML=slides.map((s,i)=>`
+    <div class="popup-slide${i===0?' active':''}" id="pslide-${i}">
+      ${s.img?`<img class="popup-img" src="${driveUrl(s.img)}" alt="">`:`<div class="popup-ph"><span class="ko">${esc(s.caption_ko)}</span><span class="en">${esc(s.caption_en)}</span></div>`}
+    </div>`).join('');
+  if(slides.length>1){
+    document.getElementById('popup-dots').innerHTML=slides.map((_,i)=>`<button class="popup-dot${i===0?' active':''}" onclick="goPopup(${i})"></button>`).join('');
+  }
+  document.getElementById('popup').classList.add('open');
+}
+function goPopup(i){
+  document.getElementById('pslide-'+popIdx).classList.remove('active');
+  document.querySelectorAll('.popup-dot')[popIdx]?.classList.remove('active');
+  popIdx=i;
+  document.getElementById('pslide-'+popIdx).classList.add('active');
+  document.querySelectorAll('.popup-dot')[popIdx]?.classList.add('active');
+}
+function closePopup(){document.getElementById('popup').classList.remove('open');}
+function popupSkipToday(){if(document.getElementById('popup-today-chk').checked){const e=new Date();e.setHours(23,59,59,999);localStorage.setItem('homes_popup_skip',e.toISOString());closePopup();}}
+
+// ── YOUTUBE ──
+function renderYT(){document.getElementById('yt-frame').src=D.youtube||'';}
+
+// ── INFO TABLE ──
+function renderInfo(){
+  const rows=D.info||[];
+  const pairs=[];
+  for(let i=0;i<rows.length;i+=2)pairs.push([rows[i],rows[i+1]]);
+  document.getElementById('info-tbl').innerHTML=pairs.map(([a,b])=>`<tr>
+    <td class="lbl ko">${esc(a?.label_ko||'')}</td><td class="ko">${esc(a?.val_ko||'')}</td>
+    <td class="lbl2 ko">${esc(b?.label_ko||'')}</td><td class="ko">${esc(b?.val_ko||'')}</td>
+    <td class="lbl en" style="display:none">${esc(a?.label_en||'')}</td><td class="en" style="display:none">${esc(a?.val_en||'')}</td>
+    <td class="lbl2 en" style="display:none">${esc(b?.label_en||'')}</td><td class="en" style="display:none">${esc(b?.val_en||'')}</td>
+  </tr>`).join('');
+}
+
+// ── SPACES ──
+let spaceIdx=0;
+function renderSpaces(){
+  const spaces=D.spaces||[];
+  document.getElementById('space-tabs').innerHTML=spaces.map((s,i)=>`
+    <button class="space-tab${i===0?' active':''}" onclick="setSpace(${i})">
+      <span class="ko">${esc(s.name_ko)}</span><span class="en">${esc(s.name_en)}</span>
+    </button>`).join('');
+  showSpace(0);
+}
+function setSpace(i){document.querySelectorAll('.space-tab').forEach((t,j)=>t.classList.toggle('active',i===j));spaceIdx=i;showSpace(i);}
+function showSpace(i){
+  const s=(D.spaces||[])[i];if(!s)return;
+  const tagsKo=(s.tags_ko||'').split(',').filter(Boolean).map(t=>`<span class="space-tag">${esc(t.trim())}</span>`).join('');
+  const tagsEn=(s.tags_en||'').split(',').filter(Boolean).map(t=>`<span class="space-tag">${esc(t.trim())}</span>`).join('');
+  document.getElementById('space-content').innerHTML=`
+    <div>${s.img?`<img src="${driveUrl(s.img)}" class="space-img" alt="">`:`<div class="space-ph"><span class="ko">사진 준비 중</span><span class="en">Photo coming soon</span></div>`}</div>
+    <div>
+      <div class="space-name"><span class="ko">${esc(s.name_ko)}</span><span class="en">${esc(s.name_en)}</span></div>
+      <div class="space-desc ko">${esc(s.desc_ko)}</div>
+      <div class="space-desc en">${esc(s.desc_en)}</div>
+      <div class="space-tags ko">${tagsKo}</div>
+      <div class="space-tags en">${tagsEn}</div>
+    </div>`;
+  setLang(LANG);
+}
+
+// ── ROOMS ──
+const slideIdx={};
+function renderRooms(){
+  document.getElementById('rooms-grid').innerHTML=(D.rooms||[]).map((r,ri)=>`
+    <div class="room-card">
+      <div class="room-slide-wrap">
+        ${(r.imgs||[]).some(Boolean)
+          ?(r.imgs||[]).map((img,ii)=>img?`<img class="room-slide-img${ii===0?' active':''}" src="${driveUrl(img)}" alt="">`:'').join('')
+          :`<div class="room-ph"><span class="ko">사진 준비 중</span><span class="en">Photo coming soon</span></div>`}
+        ${(r.imgs||[]).filter(Boolean).length>1?`<button class="slide-btn prev" onclick="slideRoom(${ri},-1)">‹</button><button class="slide-btn next" onclick="slideRoom(${ri},1)">›</button>`:''}
+        <div class="room-badges">
+          ${r.badge_tour?`<span class="badge-pill badge-tour"><span class="ko">투어 가능</span><span class="en">Tour Available</span></span>`:''}
+          ${r.badge_contract?`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Available</span></span>`:''}
+        </div>
+      </div>
+      <div class="room-body">
+        <div class="room-type ko">${esc(r.type_ko)}</div><div class="room-type en">${esc(r.type_en)}</div>
+        <div class="room-name ko">${esc(r.name_ko)}</div><div class="room-name en">${esc(r.name_en)}</div>
+        <div class="room-price ko">${esc(r.rent_ko)}</div><div class="room-price en">${esc(r.rent_en)}</div>
+        <div class="room-deposit ko">${esc(r.deposit_ko)}</div><div class="room-deposit en">${esc(r.deposit_en)}</div>
+        <hr class="room-hr">
+        <div class="room-detail"><span class="ko">관리비</span><span class="en">Maintenance</span><span class="ko">${esc(r.mgmt_ko)}</span><span class="en">${esc(r.mgmt_en)}</span></div>
+        <div class="room-detail"><span class="ko">청소비</span><span class="en">Cleaning</span><span class="ko">${esc(r.clean_ko)}</span><span class="en">${esc(r.clean_en)}</span></div>
+      </div>
+    </div>`).join('');
+  setLang(LANG);
+}
+function slideRoom(ri,dir){
+  const imgs=(D.rooms[ri]?.imgs||[]).filter(Boolean);
+  if(imgs.length<2)return;
+  const cur=slideIdx[ri]||0;
+  const next=(cur+dir+imgs.length)%imgs.length;
+  const wrap=document.querySelectorAll('.room-slide-wrap')[ri];
+  wrap.querySelectorAll('.room-slide-img').forEach((el,i)=>el.classList.toggle('active',i===next));
+  slideIdx[ri]=next;
+}
+
+// ── UTILS ──
+function driveUrl(url){if(!url)return'';const m=url.match(/\/d\/([^/]+)/);return m?`https://drive.google.com/uc?export=view&id=${m[1]}`:url;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function getDefault(){return{popup:[{img:'',caption_ko:'현재 진행 중인 프로모션',caption_en:'Current Promotion'}],youtube:'https://www.youtube.com/embed/g4gookv6YTY',info:[{label_ko:'위치',val_ko:'서울특별시 성북구 고려대로 30',label_en:'Location',val_en:'30, Korea University-ro, Seongbuk-gu, Seoul'},{label_ko:'보증금 / 임대료',val_ko:'200만원 / 월 125~135만원',label_en:'Deposit / Rent',val_en:'2,000,000 KRW / 1,250,000~1,350,000 KRW/mo'},{label_ko:'계주 인원',val_ko:'1인',label_en:'Occupancy',val_en:'1 person'},{label_ko:'계약 기간',val_ko:'1개월 이상',label_en:'Lease Term',val_en:'1 month or more'},{label_ko:'퇴실청소비',val_ko:'120,000원',label_en:'Cleaning Fee',val_en:'120,000 KRW'},{label_ko:'근린역 도보',val_ko:'5분',label_en:'Nearest Station',val_en:'5 min walk'},{label_ko:'관리비',val_ko:'고정 월 259,000원 (수도·전기·가스·인터넷 포함)',label_en:'Maintenance',val_en:'Fixed 259,000 KRW/mo (utilities incl.)'},{label_ko:'수지',val_ko:'10대',label_en:'Units',val_en:'10 units'},{label_ko:'입대인',val_ko:'-',label_en:'Landlord',val_en:'-'},{label_ko:'입주 가능일',val_ko:'협의',label_en:'Move-in Date',val_en:'By arrangement'}],spaces:[{id:'lounge',name_ko:'오픈 라운지',name_en:'Open Lounge',desc_ko:'커피바와 키친, 소파 존이 어우러진 오픈 라운지. 입주민 누구나 자유롭게 머물 수 있는 공간으로, 스터디룸·미팅룸·피트니스룸·런드리룸과 자연스럽게 연결되는 일상의 중심입니다.',desc_en:'An open lounge with a coffee bar, kitchen, and sofa area. The central hub connecting all shared spaces.',tags_ko:'자유로운 휴식,공간의 중심,소소한 수다',tags_en:'Free Rest,Hub,Casual Chat',img:''},{id:'meeting',name_ko:'미팅룸',name_en:'Meeting Room',desc_ko:'개인 프로젝트, 상담, 과외 등 다양한 목적에 맞게 활용할 수 있는 공간입니다.',desc_en:'A flexible space for personal projects, consultations, tutoring, and more.',tags_ko:'개인 프로젝트,소그룹 미팅',tags_en:'Personal Project,Small Group',img:''},{id:'study',name_ko:'스터디룸',name_en:'Study Room',desc_ko:'자유로운 분위기 속에서도 몰입이 가능한 공간. 자기계발과 학업, 업무까지 일상의 배움과 성장을 유연하게 이어갈 수 있습니다.',desc_en:'A space for deep focus. Perfect for studying, self-development, and work.',tags_ko:'집중 학습,자기계발',tags_en:'Deep Focus,Self-Development',img:''},{id:'fitness',name_ko:'피트니스룸',name_en:'Fitness Room',desc_ko:'기본 운동기구와 러닝머신을 갖춘 피트니스 공간.',desc_en:'Equipped with basic exercise machines and a treadmill.',tags_ko:'운동기구,러닝머신',tags_en:'Equipment,Treadmill',img:''},{id:'relax',name_ko:'릴렉스룸',name_en:'Relax Room',desc_ko:'조용한 분위기 속에서 나만의 시간을 보낼 수 있는 공간입니다. 안마의자에 몸을 맡기고 하루의 피로를 풀어보세요.',desc_en:'A quiet retreat with massage chairs. Unwind and recharge after a long day.',tags_ko:'안마의자,조용한 휴식',tags_en:'Massage Chair,Quiet Rest',img:''},{id:'wellness',name_ko:'웰니스룸',name_en:'Wellness Room',desc_ko:'입주민이 함께 모여 영화를 보거나, 가볍게 이야기를 나누며 시간을 보낼 수 있는 공간입니다.',desc_en:'A cozy room for movie nights and casual conversations.',tags_ko:'영화 감상,커뮤니티',tags_en:'Movie Nights,Community',img:''}],rooms:[{id:'work',type_ko:'A Type · 워크형',type_en:'A Type · Work',name_ko:'워크형',name_en:'Work Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']},{id:'walkin',type_ko:'B Type · 수납강화형',type_en:'B Type · Walk-in Closet',name_ko:'수납강화형',name_en:'Walk-in Closet Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:false,imgs:['','']},{id:'full',type_ko:'C Type · 풀퍼니시드형',type_en:'C Type · Full-Furnished',name_ko:'풀퍼니시드형',name_en:'Full-Furnished Type',rent_ko:'월 135만원',rent_en:'1,350,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:false,badge_contract:true,imgs:['','']},{id:'multi',type_ko:'D Type · 멀티형',type_en:'D Type · Multi',name_ko:'멀티형',name_en:'Multi Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']}],steps:[],detail_cols:[],detail_items:[]};}
+
+// ── INIT ──
+setLang(LANG);
+renderPopup();
+renderYT();
+renderInfo();
+renderSpaces();
+renderRooms();
+</script>
+</body>
+</html>

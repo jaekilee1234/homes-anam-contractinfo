@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | HOMES Anam</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f6f7f9;--red:#e53e3e;--green:#38a169;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--soft);color:var(--navy);}
+header{background:var(--navy);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;}
+.h-left{display:flex;align-items:center;gap:10px;}
+.h-logo{color:#fff;font-weight:800;font-size:18px;}
+.h-badge{background:var(--gold);color:var(--navy);font-size:10px;font-weight:800;padding:3px 9px;border-radius:5px;}
+.h-right{display:flex;gap:8px;}
+.btn{font-family:var(--font);font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:5px;text-decoration:none;}
+.btn-gold{background:var(--gold);color:var(--navy);}
+.btn-ghost-w{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);}
+.btn-ghost-w:hover{background:rgba(255,255,255,.2);}
+.btn-outline{background:#fff;color:var(--navy);border:1px solid var(--line);}
+.btn-outline:hover{background:var(--soft);}
+.btn-danger{background:#fff0f0;color:var(--red);border:1px solid #ffd5d5;}
+.btn-danger:hover{background:#ffe0e0;}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px;}
+.tabs{display:flex;border-bottom:2px solid var(--line);padding:0 28px;background:#fff;}
+.tab{padding:14px 20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:none;font-family:var(--font);color:var(--gray);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.main{max-width:920px;margin:0 auto;padding:28px 24px 80px;}
+.panel{display:none;}.panel.active{display:block;}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px;}
+.card-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg.full{grid-column:1/-1;}
+label{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;}
+input[type=text],input[type=url],textarea,select{font-family:var(--font);font-size:13px;color:var(--navy);border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:#fff;width:100%;outline:none;transition:border-color .15s;resize:vertical;}
+input:focus,textarea:focus,select:focus{border-color:var(--navy);}
+textarea{min-height:72px;}
+.hint{font-size:11px;color:var(--gray);margin-top:3px;}
+.sw-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--gray);}
+.sw{position:relative;width:38px;height:22px;flex-shrink:0;}
+.sw input{display:none;}
+.sl{position:absolute;inset:0;background:var(--line);border-radius:22px;cursor:pointer;transition:.2s;}
+.sl::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;}
+.sw input:checked+.sl{background:var(--green);}
+.sw input:checked+.sl::before{transform:translateX(16px);}
+/* ACC */
+.acc-item{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.acc-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+.acc-head:hover{background:#fafafa;}
+.acc-num{width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;}
+.acc-info{flex:1;}
+.acc-name{font-size:14px;font-weight:700;}
+.acc-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+.acc-body{border-top:1px solid var(--line);padding:18px;display:none;}
+.acc-body.open{display:block;}
+.chv{transition:transform .2s;color:var(--gray);}
+.chv.open{transform:rotate(180deg);}
+/* BADGE TOGGLES */
+.badge-row{display:flex;gap:10px;flex-wrap:wrap;}
+.btog{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);cursor:pointer;font-size:13px;font-weight:700;background:#fff;transition:.15s;user-select:none;}
+.btog.on-tour{background:var(--navy);color:#fff;border-color:var(--navy);}
+.btog.on-contract{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+/* POPUP ITEM */
+.pi{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--soft);border-radius:10px;margin-bottom:8px;}
+.pi-body{flex:1;}
+/* SAVE BAR */
+.save-bar{display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);gap:8px;}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(6px);transition:.22s;z-index:999;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.ok{background:var(--green);}
+#toast.err{background:var(--red);}
+@media(max-width:600px){.fr{grid-template-columns:1fr;}header,.tabs{padding-left:14px;padding-right:14px;}.main{padding:18px 12px 60px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-left"><span class="h-logo">HOMES Anam</span><span class="h-badge">ADMIN</span></div>
+  <div class="h-right">
+    <button class="btn btn-gold" onclick="saveAll()">저장하기</button>
+    <a class="btn btn-ghost-w" href="index.html" target="_blank">↗ 홈</a>
+    <a class="btn btn-ghost-w" href="process.html" target="_blank">↗ 계약단계</a>
+    <a class="btn btn-ghost-w" href="info.html" target="_blank">↗ 상세정보</a>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('main',this)">메인페이지</button>
+  <button class="tab" onclick="switchTab('process',this)">계약 단계</button>
+  <button class="tab" onclick="switchTab('info',this)">상세 정보</button>
+</div>
+<div class="main">
+
+  <!-- ── MAIN PANEL ── -->
+  <div class="panel active" id="panel-main">
+    <div class="card">
+      <div class="card-title">팝업 이미지<button class="btn btn-outline btn-sm" onclick="addPopup()">+ 추가</button></div>
+      <div id="popup-list"></div>
+      <div class="hint" style="margin-top:6px;">Google Drive 공유 링크를 그대로 붙여넣으면 자동 변환됩니다.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">유튜브 영상</div>
+      <div class="fg"><label>YouTube URL</label><input type="url" id="yt-url" placeholder="https://www.youtube.com/watch?v=..."></div>
+    </div>
+    <div class="card">
+      <div class="card-title">기본 정보 (5행 × 2열)</div>
+      <div id="info-rows"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">공용공간</div>
+      <div id="spaces-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">호실 타입 카드</div>
+      <div id="rooms-list"></div>
+    </div>
+  </div>
+
+  <!-- ── PROCESS PANEL ── -->
+  <div class="panel" id="panel-process">
+    <div class="card">
+      <div class="card-title">계약 단계 (11단계)</div>
+      <div id="steps-list"></div>
+    </div>
+  </div>
+
+  <!-- ── INFO PANEL ── -->
+  <div class="panel" id="panel-info">
+    <div class="card">
+      <div class="card-title">카테고리 관리<button class="btn btn-outline btn-sm" onclick="addCol()">+ 카테고리 추가</button></div>
+      <div id="cols-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">항목 관리<button class="btn btn-outline btn-sm" onclick="addItem()">+ 항목 추가</button></div>
+      <div id="items-list"></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+let D=loadData();
+let openAcc={sp:null,rm:null,st:null,it:null};
+
+function loadData(){
+  const saved=localStorage.getItem('homes_data');
+  if(saved)return JSON.parse(saved);
+  return{popup:[{img:'',caption_ko:'현재 진행 중인 프로모션',caption_en:'Current Promotion'}],youtube:'https://www.youtube.com/embed/g4gookv6YTY',info:[{label_ko:'위치',val_ko:'서울특별시 성북구 고려대로 30',label_en:'Location',val_en:'30, Korea University-ro, Seongbuk-gu, Seoul'},{label_ko:'보증금 / 임대료',val_ko:'200만원 / 월 125~135만원',label_en:'Deposit / Rent',val_en:'2,000,000 KRW / 1,250,000~1,350,000 KRW/mo'},{label_ko:'계주 인원',val_ko:'1인',label_en:'Occupancy',val_en:'1 person'},{label_ko:'계약 기간',val_ko:'1개월 이상',label_en:'Lease Term',val_en:'1 month or more'},{label_ko:'퇴실청소비',val_ko:'120,000원',label_en:'Cleaning Fee',val_en:'120,000 KRW'},{label_ko:'근린역 도보',val_ko:'5분',label_en:'Nearest Station',val_en:'5 min walk'},{label_ko:'관리비',val_ko:'고정 월 259,000원 (수도·전기·가스·인터넷 포함)',label_en:'Maintenance',val_en:'Fixed 259,000 KRW/mo (utilities incl.)'},{label_ko:'수지',val_ko:'10대',label_en:'Units',val_en:'10 units'},{label_ko:'입대인',val_ko:'-',label_en:'Landlord',val_en:'-'},{label_ko:'입주 가능일',val_ko:'협의',label_en:'Move-in Date',val_en:'By arrangement'}],spaces:[{id:'lounge',name_ko:'오픈 라운지',name_en:'Open Lounge',desc_ko:'커피바와 키친, 소파 존이 어우러진 오픈 라운지.',desc_en:'An open lounge with a coffee bar, kitchen, and sofa area.',tags_ko:'자유로운 휴식,공간의 중심',tags_en:'Free Rest,Hub',img:''},{id:'meeting',name_ko:'미팅룸',name_en:'Meeting Room',desc_ko:'개인 프로젝트, 상담, 과외 등 다양한 목적에 맞게 활용할 수 있는 공간입니다.',desc_en:'A flexible space for personal projects, consultations, and more.',tags_ko:'개인 프로젝트,소그룹 미팅',tags_en:'Personal Project,Small Group',img:''},{id:'study',name_ko:'스터디룸',name_en:'Study Room',desc_ko:'자유로운 분위기 속에서도 몰입이 가능한 공간.',desc_en:'A space for deep focus.',tags_ko:'집중 학습,자기계발',tags_en:'Deep Focus,Self-Development',img:''},{id:'fitness',name_ko:'피트니스룸',name_en:'Fitness Room',desc_ko:'기본 운동기구와 러닝머신을 갖춘 피트니스 공간.',desc_en:'Equipped with basic exercise machines and a treadmill.',tags_ko:'운동기구,러닝머신',tags_en:'Equipment,Treadmill',img:''},{id:'relax',name_ko:'릴렉스룸',name_en:'Relax Room',desc_ko:'안마의자에 몸을 맡기고 하루의 피로를 풀어보세요.',desc_en:'A quiet retreat with massage chairs.',tags_ko:'안마의자,조용한 휴식',tags_en:'Massage Chair,Quiet Rest',img:''},{id:'wellness',name_ko:'웰니스룸',name_en:'Wellness Room',desc_ko:'입주민이 함께 모여 영화를 보거나 이야기를 나눌 수 있는 공간입니다.',desc_en:'A cozy room for movie nights and casual conversations.',tags_ko:'영화 감상,커뮤니티',tags_en:'Movie Nights,Community',img:''}],rooms:[{id:'work',type_ko:'A Type · 워크형',type_en:'A Type · Work',name_ko:'워크형',name_en:'Work Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']},{id:'walkin',type_ko:'B Type · 수납강화형',type_en:'B Type · Walk-in Closet',name_ko:'수납강화형',name_en:'Walk-in Closet Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:false,imgs:['','']},{id:'full',type_ko:'C Type · 풀퍼니시드형',type_en:'C Type · Full-Furnished',name_ko:'풀퍼니시드형',name_en:'Full-Furnished Type',rent_ko:'월 135만원',rent_en:'1,350,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:false,badge_contract:true,imgs:['','']},{id:'multi',type_ko:'D Type · 멀티형',type_en:'D Type · Multi',name_ko:'멀티형',name_en:'Multi Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']}],steps:[{num:'1',title_ko:'문의 내용 접수 및 상담 진행',title_en:'Inquiry & Initial Consultation',desc_ko:'이메일을 통해 문의 내용을 접수한 후, 희망 입주일, 퇴실일, 희망 타입 등을 기준으로 상담을 진행합니다.',desc_en:'Submit your inquiry via email. Our team will consult on your desired move-in date, check-out date, and room type.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'1-1',title_ko:'투어 진행',title_en:'Property Tour',desc_ko:'오프라인 방문 또는 온라인(영상통화) 투어 가능. 평일 10:00~18:00 (KST). 입주일까지 기간이 많이 남은 경우 동일 타입의 다른 호실을 안내할 수 있습니다.',desc_en:'Tours available in person or via video call. Weekdays 10:00 AM–6:00 PM (KST). If move-in is far off, we may show a similar room of the same type.',optional:true,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'2',title_ko:'계약 가능 여부 확인',title_en:'Availability Confirmation',desc_ko:'희망 입주일, 퇴실일, 희망 타입을 기준으로 계약 가능 여부를 확인합니다.',desc_en:'We will verify availability based on your desired move-in date, check-out date, and room type.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'3',title_ko:'계약 정보 전달',title_en:'Document Submission',desc_ko:'여권 사본, 이메일 주소, 비상연락처(이름/관계/연락처), 주소를 이메일로 전달해 주세요.',desc_en:'Please send: copy of passport, email address, emergency contact (name/relationship/phone), and address.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'4',title_ko:'계약 조건 및 납부 금액 안내',title_en:'Contract Terms & Payment Details',desc_ko:'보증금, 임대료, 관리비, 퇴실청소비, 입금 일정 등을 정리해 안내드립니다.',desc_en:'We will provide a detailed breakdown of deposit, rent, maintenance, cleaning fee, and payment schedule.',optional:false,btn_label_ko:'입금 스케줄 예시',btn_label_en:'Payment Schedule',btn_url_ko:'',btn_url_en:''},{num:'5',title_ko:'계약서 발송',title_en:'Contract Sent',desc_ko:'전달해주신 정보를 바탕으로 계약서를 작성하여 이메일로 보내드립니다.',desc_en:'We will prepare your contract and send it to your email.',optional:false,btn_label_ko:'계약서 예시',btn_label_en:'Contract Example',btn_url_ko:'',btn_url_en:''},{num:'6',title_ko:'계약서 서명',title_en:'Contract Signing',desc_ko:'계약 내용을 확인하신 후 온라인으로 서명해 주시면 됩니다.',desc_en:'Review the contract and sign it online.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'7',title_ko:'계약금 납부',title_en:'Contract Deposit Payment',desc_ko:'계약서 서명 후 안내된 계약금을 지정 계좌로 입금해 주세요.',desc_en:'After signing, transfer the contract deposit to the designated account.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'8',title_ko:'입주 안내 발송',title_en:'Move-In Guide Sent',desc_ko:'입주 전 입주 가이드와 호실 이용 안내를 이메일로 전달드립니다.',desc_en:'Before your move-in date, we will send a comprehensive resident guide via email.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'9',title_ko:'입금 확인 및 계약 확정',title_en:'Payment Confirmed & Contract Finalized',desc_ko:'입금 확인 후 계약이 최종 확정됩니다. 입금 기한은 입주일 기준이며, 입주일이 휴일인 경우 직전 평일을 기준으로 합니다.',desc_en:'Once payment is confirmed, your contract is officially finalized. If the move-in date falls on a holiday, the preceding business day applies.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'10',title_ko:'잔금 납부',title_en:'Balance Payment',desc_ko:'입금 스케줄에 따라 보증금 잔금과 입주월의 임대료 및 관리비를 납부해 주세요.',desc_en:"Pay the remaining deposit balance along with the first month's rent and maintenance fee per the payment schedule.",optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'11',title_ko:'납부 확인 · 비밀번호 전달 및 입주',title_en:'Move-In & Key Handover',desc_ko:'납부 확인 시 호실 비밀번호를 전달드립니다. 입주 후 문의사항은 카카오톡 입주민 채널을 통해 접수해 주세요.',desc_en:'Upon payment confirmation, your room passcode will be sent. After moving in, inquiries can be submitted via the KakaoTalk resident channel.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''}],detail_cols:[{id:'contract',name_ko:'계약 조건',name_en:'Contract Terms',order:0},{id:'cost',name_ko:'비용 안내',name_en:'Cost Guide',order:1},{id:'furniture',name_ko:'가구·옵션',name_en:'Furniture & Options',order:2},{id:'etc',name_ko:'기타',name_en:'Other',order:3}],detail_items:[{id:1,col_id:'cost',order:0,title_ko:'입금 스케줄 안내',title_en:'Payment Schedule',summary_ko:'계약금, 보증금 잔금, 월 임대료 납부 일정을 정리한 안내',summary_en:'A guide to contract deposit, balance, and monthly rent payment schedule',desc_ko:'각 납부 기한은 입주일 기준으로 산정되며, 입주일이 휴일인 경우 직전 평일을 기준으로 합니다.\n\n자세한 납부 일정은 첨부 파일을 참고해 주세요.',desc_en:'Each payment deadline is based on your move-in date. If it falls on a holiday, the preceding business day applies.\n\nPlease refer to the attached file for details.',file_url_ko:'',file_url_en:''},{id:2,col_id:'contract',order:0,title_ko:'보증금 조정 안내',title_en:'Deposit Adjustment',summary_ko:'장기 계약 시 별도 협의 가능',summary_en:'Negotiable for long-term contracts',desc_ko:'보증금은 기본 200만원이며, 장기 계약(6개월 이상) 시 별도 협의가 가능합니다.',desc_en:'The standard deposit is 2,000,000 KRW. Adjustments may be negotiated for long-term contracts (6 months+).',file_url_ko:'',file_url_en:''}]};
+}
+function saveData(){localStorage.setItem('homes_data',JSON.stringify(D));}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'');setTimeout(()=>t.className='',2800);}
+function switchTab(id,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');el.classList.add('active');}
+
+// ── POPUP ──
+function renderPopup(){
+  document.getElementById('popup-list').innerHTML=(D.popup||[]).map((p,i)=>`
+    <div class="pi">
+      <div class="pi-body">
+        <div class="fr" style="margin-bottom:8px;">
+          <div class="fg"><label>캡션 (한국어)</label><input type="text" value="${esc(p.caption_ko)}" onchange="D.popup[${i}].caption_ko=this.value"></div>
+          <div class="fg"><label>Caption (EN)</label><input type="text" value="${esc(p.caption_en)}" onchange="D.popup[${i}].caption_en=this.value"></div>
+        </div>
+        <div class="fg"><label>이미지 URL (Google Drive 공유 링크)</label><input type="url" value="${esc(p.img)}" placeholder="https://drive.google.com/file/d/..." onchange="D.popup[${i}].img=this.value"></div>
+      </div>
+      <button class="btn btn-danger btn-sm" style="align-self:flex-start;flex-shrink:0;" onclick="D.popup.splice(${i},1);renderPopup()">삭제</button>
+    </div>`).join('');}
+function addPopup(){D.popup.push({img:'',caption_ko:'',caption_en:''});renderPopup();}
+
+// ── YT ──
+function renderYT(){document.getElementById('yt-url').value=(D.youtube||'').replace('embed/','watch?v=');}
+function ytVal(){let v=document.getElementById('yt-url').value.trim();const m=v.match(/(?:v=|youtu\.be\/)([^&?/]+)/);return m?`https://www.youtube.com/embed/${m[1]}`:v;}
+
+// ── INFO ──
+function renderInfo(){
+  document.getElementById('info-rows').innerHTML=(D.info||[]).map((r,i)=>`
+    <div style="background:var(--soft);border-radius:10px;padding:12px;margin-bottom:8px;">
+      <div class="fr" style="margin-bottom:8px;">
+        <div class="fg"><label>항목명 (한국어)</label><input type="text" value="${esc(r.label_ko)}" onchange="D.info[${i}].label_ko=this.value"></div>
+        <div class="fg"><label>Label (EN)</label><input type="text" value="${esc(r.label_en)}" onchange="D.info[${i}].label_en=this.value"></div>
+      </div>
+      <div class="fr" style="margin-bottom:0;">
+        <div class="fg"><label>내용 (한국어)</label><input type="text" value="${esc(r.val_ko)}" onchange="D.info[${i}].val_ko=this.value"></div>
+        <div class="fg"><label>Value (EN)</label><input type="text" value="${esc(r.val_en)}" onchange="D.info[${i}].val_en=this.value"></div>
+      </div>
+    </div>`).join('');}
+
+// ── SPACES ──
+function renderSpaces(){
+  document.getElementById('spaces-list').innerHTML=(D.spaces||[]).map((s,i)=>`
+    <div class="acc-item">
+      <div class="acc-head" onclick="tog('sp',${i})">
+        <div class="acc-num">${i+1}</div>
+        <div class="acc-info"><div class="acc-name">${esc(s.name_ko)}</div><div class="acc-sub">${esc(s.name_en)}</div></div>
+        <svg class="chv${openAcc.sp===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="acc-body${openAcc.sp===i?' open':''}">
+        <div class="fr">
+          <div class="fg"><label>이름 (한국어)</label><input type="text" value="${esc(s.name_ko)}" onchange="D.spaces[${i}].name_ko=this.value"></div>
+          <div class="fg"><label>Name (EN)</label><input type="text" value="${esc(s.name_en)}" onchange="D.spaces[${i}].name_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>설명 (한국어)</label><textarea onchange="D.spaces[${i}].desc_ko=this.value">${esc(s.desc_ko)}</textarea></div>
+          <div class="fg"><label>Description (EN)</label><textarea onchange="D.spaces[${i}].desc_en=this.value">${esc(s.desc_en)}</textarea></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>태그 한국어 (쉼표 구분)</label><input type="text" value="${esc(s.tags_ko)}" onchange="D.spaces[${i}].tags_ko=this.value"></div>
+          <div class="fg"><label>Tags EN (comma separated)</label><input type="text" value="${esc(s.tags_en)}" onchange="D.spaces[${i}].tags_en=this.value"></div>
+        </div>
+        <div class="fg"><label>사진 URL (Google Drive)</label><input type="url" value="${esc(s.img)}" placeholder="https://drive.google.com/file/d/..." onchange="D.spaces[${i}].img=this.value"></div>
+      </div>
+    </div>`).join('');}
+
+// ── ROOMS ──
+function renderRooms(){
+  document.getElementById('rooms-list').innerHTML=(D.rooms||[]).map((r,i)=>`
+    <div class="acc-item">
+      <div class="acc-head" onclick="tog('rm',${i})">
+        <div class="acc-num" style="background:${r.badge_contract?'var(--gold)':'var(--line)'};color:${r.badge_contract?'var(--navy)':'var(--gray)'};">${i+1}</div>
+        <div class="acc-info"><div class="acc-name">${esc(r.name_ko)}</div><div class="acc-sub">${esc(r.type_en)}</div></div>
+        <div style="display:flex;gap:5px;margin-right:8px;">
+          ${r.badge_tour?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--navy);color:#fff;">투어가능</span>':''}
+          ${r.badge_contract?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--gold);color:var(--navy);">계약가능</span>':''}
+        </div>
+        <svg class="chv${openAcc.rm===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="acc-body${openAcc.rm===i?' open':''}">
+        <div style="margin-bottom:14px;">
+          <label style="display:block;margin-bottom:8px;">배지 설정</label>
+          <div class="badge-row">
+            <div class="btog${r.badge_tour?' on-tour':''}" onclick="D.rooms[${i}].badge_tour=!D.rooms[${i}].badge_tour;openAcc.rm=${i};renderRooms()">투어 가능</div>
+            <div class="btog${r.badge_contract?' on-contract':''}" onclick="D.rooms[${i}].badge_contract=!D.rooms[${i}].badge_contract;openAcc.rm=${i};renderRooms()">계약 가능</div>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>타입명 (한국어)</label><input type="text" value="${esc(r.type_ko)}" onchange="D.rooms[${i}].type_ko=this.value"></div>
+          <div class="fg"><label>Type Name (EN)</label><input type="text" value="${esc(r.type_en)}" onchange="D.rooms[${i}].type_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>임대료 (한국어)</label><input type="text" value="${esc(r.rent_ko)}" onchange="D.rooms[${i}].rent_ko=this.value"></div>
+          <div class="fg"><label>Rent (EN)</label><input type="text" value="${esc(r.rent_en)}" onchange="D.rooms[${i}].rent_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>사진 1 URL</label><input type="url" value="${esc((r.imgs||[])[0]||'')}" placeholder="https://drive.google.com/file/d/..." onchange="D.rooms[${i}].imgs[0]=this.value"></div>
+          <div class="fg"><label>사진 2 URL</label><input type="url" value="${esc((r.imgs||[])[1]||'')}" placeholder="https://drive.google.com/file/d/..." onchange="D.rooms[${i}].imgs[1]=this.value"></div>
+        </div>
+      </div>
+    </div>`).join('');}
+
+// ── STEPS ──
+function renderSteps(){
+  document.getElementById('steps-list').innerHTML=(D.steps||[]).map((s,i)=>`
+    <div class="acc-item">
+      <div class="acc-head" onclick="tog('st',${i})">
+        <div class="acc-num" style="${s.optional?'background:var(--line);color:var(--gray)':''}">${esc(s.num)}</div>
+        <div class="acc-info"><div class="acc-name">${esc(s.title_ko)}</div><div class="acc-sub">${esc(s.title_en)}${s.optional?' · 선택':''}</div></div>
+        <svg class="chv${openAcc.st===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="acc-body${openAcc.st===i?' open':''}">
+        <div class="fr">
+          <div class="fg"><label>제목 (한국어)</label><input type="text" value="${esc(s.title_ko)}" onchange="D.steps[${i}].title_ko=this.value"></div>
+          <div class="fg"><label>Title (EN)</label><input type="text" value="${esc(s.title_en)}" onchange="D.steps[${i}].title_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>설명 (한국어)</label><textarea onchange="D.steps[${i}].desc_ko=this.value">${esc(s.desc_ko)}</textarea></div>
+          <div class="fg"><label>Description (EN)</label><textarea onchange="D.steps[${i}].desc_en=this.value">${esc(s.desc_en)}</textarea></div>
+        </div>
+        <div style="background:var(--soft);border-radius:10px;padding:12px;margin-top:4px;">
+          <label style="display:block;margin-bottom:10px;">버튼 (예시자료 링크 · 없으면 비워두세요)</label>
+          <div class="fr" style="margin-bottom:8px;">
+            <div class="fg"><label>버튼 텍스트 (한국어)</label><input type="text" value="${esc(s.btn_label_ko)}" onchange="D.steps[${i}].btn_label_ko=this.value"></div>
+            <div class="fg"><label>Button Text (EN)</label><input type="text" value="${esc(s.btn_label_en)}" onchange="D.steps[${i}].btn_label_en=this.value"></div>
+          </div>
+          <div class="fr" style="margin-bottom:0;">
+            <div class="fg"><label>링크 URL (한국어 파일)</label><input type="url" value="${esc(s.btn_url_ko)}" onchange="D.steps[${i}].btn_url_ko=this.value"></div>
+            <div class="fg"><label>Link URL (English file)</label><input type="url" value="${esc(s.btn_url_en)}" onchange="D.steps[${i}].btn_url_en=this.value"></div>
+          </div>
+        </div>
+        <div class="sw-row" style="margin-top:12px;">
+          <label class="sw"><input type="checkbox" ${s.optional?'checked':''} onchange="D.steps[${i}].optional=this.checked"><div class="sl"></div></label>선택 사항 (Optional)
+        </div>
+      </div>
+    </div>`).join('');}
+
+// ── DETAIL COLS ──
+function renderCols(){
+  document.getElementById('cols-list').innerHTML=(D.detail_cols||[]).map((c,i)=>`
+    <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--soft);border-radius:10px;margin-bottom:8px;">
+      <div class="fr" style="flex:1;margin-bottom:0;">
+        <div class="fg"><label>카테고리명 (한국어)</label><input type="text" value="${esc(c.name_ko)}" onchange="D.detail_cols[${i}].name_ko=this.value"></div>
+        <div class="fg"><label>Category (EN)</label><input type="text" value="${esc(c.name_en)}" onchange="D.detail_cols[${i}].name_en=this.value"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button class="btn btn-outline btn-sm" onclick="moveCol(${i},-1)">↑</button>
+        <button class="btn btn-outline btn-sm" onclick="moveCol(${i},1)">↓</button>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="D.detail_cols.splice(${i},1);renderCols()">삭제</button>
+    </div>`).join('');}
+function addCol(){D.detail_cols.push({id:'col_'+Date.now(),name_ko:'새 카테고리',name_en:'New Category',order:D.detail_cols.length});renderCols();}
+function moveCol(i,dir){const a=D.detail_cols,n=i+dir;if(n<0||n>=a.length)return;[a[i],a[n]]=[a[n],a[i]];a.forEach((c,idx)=>c.order=idx);renderCols();}
+
+// ── DETAIL ITEMS ──
+function renderItems(){
+  const cols=D.detail_cols||[];
+  const colMap={};cols.forEach(c=>colMap[c.id]=c);
+  document.getElementById('items-list').innerHTML=(D.detail_items||[]).map((item,i)=>`
+    <div class="acc-item">
+      <div class="acc-head" onclick="tog('it',${i})">
+        <div class="acc-num" style="font-size:11px;background:var(--soft);color:var(--gray);border:1px solid var(--line);">항목</div>
+        <div class="acc-info">
+          <div class="acc-name">${esc(item.title_ko)}</div>
+          <div class="acc-sub">${esc((colMap[item.col_id]||{}).name_ko||item.col_id)}</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-right:8px;">
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();moveItem(${i},-1)">↑</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();moveItem(${i},1)">↓</button>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();D.detail_items.splice(${i},1);renderItems()">삭제</button>
+        </div>
+        <svg class="chv${openAcc.it===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="acc-body${openAcc.it===i?' open':''}">
+        <div class="fg" style="margin-bottom:12px;">
+          <label>카테고리</label>
+          <select onchange="D.detail_items[${i}].col_id=this.value">
+            ${cols.map(c=>`<option value="${esc(c.id)}"${item.col_id===c.id?' selected':''}>${esc(c.name_ko)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>제목 (한국어)</label><input type="text" value="${esc(item.title_ko)}" onchange="D.detail_items[${i}].title_ko=this.value"></div>
+          <div class="fg"><label>Title (EN)</label><input type="text" value="${esc(item.title_en)}" onchange="D.detail_items[${i}].title_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>한줄 요약 (한국어)</label><input type="text" value="${esc(item.summary_ko)}" onchange="D.detail_items[${i}].summary_ko=this.value"></div>
+          <div class="fg"><label>Summary (EN)</label><input type="text" value="${esc(item.summary_en)}" onchange="D.detail_items[${i}].summary_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>상세 내용 (한국어)</label><textarea style="min-height:100px;" onchange="D.detail_items[${i}].desc_ko=this.value">${esc(item.desc_ko)}</textarea></div>
+          <div class="fg"><label>Detail (EN)</label><textarea style="min-height:100px;" onchange="D.detail_items[${i}].desc_en=this.value">${esc(item.desc_en)}</textarea></div>
+        </div>
+        <div style="background:var(--soft);border-radius:10px;padding:12px;margin-top:4px;">
+          <label style="display:block;margin-bottom:8px;">첨부파일 URL (없으면 버튼 미표시)</label>
+          <div class="fr" style="margin-bottom:0;">
+            <div class="fg"><label>한국어 파일 URL</label><input type="url" value="${esc(item.file_url_ko)}" placeholder="https://drive.google.com/..." onchange="D.detail_items[${i}].file_url_ko=this.value"></div>
+            <div class="fg"><label>English File URL</label><input type="url" value="${esc(item.file_url_en)}" placeholder="https://drive.google.com/..." onchange="D.detail_items[${i}].file_url_en=this.value"></div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');}
+function addItem(){D.detail_items.push({id:Date.now(),col_id:(D.detail_cols[0]||{}).id||'etc',order:D.detail_items.length,title_ko:'',title_en:'',summary_ko:'',summary_en:'',desc_ko:'',desc_en:'',file_url_ko:'',file_url_en:''});openAcc.it=D.detail_items.length-1;renderItems();}
+function moveItem(i,dir){const a=D.detail_items,n=i+dir;if(n<0||n>=a.length)return;[a[i],a[n]]=[a[n],a[i]];renderItems();}
+
+// ── TOGGLE ──
+function tog(type,i){openAcc[type]=openAcc[type]===i?null:i;if(type==='sp')renderSpaces();else if(type==='rm')renderRooms();else if(type==='st')renderSteps();else if(type==='it')renderItems();}
+
+// ── SAVE ──
+function saveAll(){D.youtube=ytVal();saveData();toast('저장되었습니다','ok');}
+
+// ── INIT ──
+renderPopup();renderYT();renderInfo();renderSpaces();renderRooms();renderSteps();renderCols();renderItems();
+</script>
+</body>
+</html>

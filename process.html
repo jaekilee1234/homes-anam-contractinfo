@@ -4,31 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>계약 단계 | HOMES Anam</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f6f7f9;--ink:#2d2d2d;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--soft);color:var(--ink);}
-nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 72px;}
+body{font-family:var(--font);background:var(--soft);color:var(--ink);-webkit-font-smoothing:antialiased;}
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;}
 .nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
 .nav-logo span{color:#1a1a1a;font-weight:700;}
-.nav-links{display:flex;align-items:center;gap:4px;}
-.nav-link{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gray);text-decoration:none;transition:.15s;font-family:var(--font);}
-.nav-link:hover{background:var(--soft);color:var(--ink);}
-.nav-link.active{color:var(--ink);}
-.lang-toggle{display:flex;gap:3px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
-.lang-btn{padding:5px 12px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--gray);cursor:pointer;transition:.15s;}
+.nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
+.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);}
+.nav-link:hover,.nav-link.active{color:var(--ink);}
+.nav-link.active{font-weight:700;}
+.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
+.lang-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;}
 .lang-btn.active{background:var(--navy);color:#fff;}
-.hero{background:var(--navy);padding:52px 32px 44px;text-align:center;}
+.hero{background:var(--navy);padding:52px 48px 44px;text-align:center;}
 .hero-badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.08em;margin-bottom:16px;}
 .hero h1{color:#fff;font-size:28px;font-weight:800;margin-bottom:10px;line-height:1.3;}
-.hero p{color:rgba(255,255,255,.55);font-size:14px;line-height:1.6;max-width:480px;margin:0 auto;}
-.main{max-width:960px;margin:0 auto;padding:44px 72px 80px;}
-.row-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:10px;margin-top:28px;}
+.hero p{color:rgba(255,255,255,.6);font-size:14px;line-height:1.6;max-width:480px;margin:0 auto;}
+.main{max-width:1060px;margin:0 auto;padding:44px 48px 80px;}
+.row-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;margin-top:32px;}
 .row-label:first-child{margin-top:0;}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:4px;}
-.step-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;}
+.step-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;transition:box-shadow .18s;}
+.step-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
 .step-card.optional{background:var(--cream);border-style:dashed;}
 .step-card.final{border-color:var(--navy);border-width:1.5px;}
 .step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:var(--gold);color:var(--navy);font-weight:800;font-size:12px;margin-bottom:10px;}
@@ -36,31 +38,32 @@ nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid va
 .step-num.fin{background:var(--navy);color:#fff;}
 .opt-badge{position:absolute;top:12px;right:12px;font-size:9px;font-weight:700;color:var(--gray);background:var(--line);padding:2px 7px;border-radius:4px;}
 .step-title{font-size:12.5px;font-weight:800;line-height:1.4;margin-bottom:7px;color:var(--ink);}
-.step-desc{font-size:11px;color:var(--gray);line-height:1.65;white-space:pre-line;}
-.step-btn{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:7px;background:var(--soft);color:var(--navy);border:1px solid var(--line);text-decoration:none;cursor:pointer;}
+.step-desc{font-size:11px;color:var(--muted);line-height:1.65;white-space:pre-line;}
+.step-btn{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:7px;background:var(--soft);color:var(--ink);border:1px solid var(--line);text-decoration:none;}
 .step-btn:hover{background:var(--cream);}
+.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(2,4,37,.18);transition:.15s;}
+.float-btn:hover{background:#0d1460;transform:translateY(-1px);}
 .ko,.en{display:none;}
 .lang-ko .ko{display:block;}
 .lang-en .en{display:block;}
 span.ko,span.en{display:none;}
 .lang-ko span.ko{display:inline;}
 .lang-en span.en{display:inline;}
-a.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(2,4,37,.2);}
-@media(max-width:720px){nav{padding:0 24px;}.main{padding:28px 24px 60px;}.grid{grid-template-columns:repeat(2,1fr);}.hero{padding:36px 24px 32px;}}
+@media(max-width:720px){nav{padding:0 20px;}.main{padding:28px 20px 60px;}.grid{grid-template-columns:repeat(2,1fr);}.hero{padding:36px 20px 32px;}}
 </style>
 </head>
 <body class="lang-ko">
 <nav>
-  <a class="nav-logo" href="index.html">HOMES <span>Anam</span></a>
+  <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
   <div class="nav-links">
     <a class="nav-link" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
     <a class="nav-link active" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
     <a class="nav-link" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
-    </div>
+  </div>
   <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
-      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-    </div>
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
 </nav>
 <div class="hero">
   <div class="hero-badge"><span class="ko">계약 진행 절차</span><span class="en">Contract Process</span></div>
@@ -70,50 +73,42 @@ a.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align
 <div class="main" id="steps-main"></div>
 <a class="float-btn" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
 <script>
-const D=JSON.parse(localStorage.getItem('homes_data')||'null')||{steps:getDefaultSteps()};
+const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5ZXVteHRlbWZta2JwdmlleGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MDMwMjgsImV4cCI6MjA1ODE3OTAyOH0.tFJdKCexkXwMEAimkRjfRi1f2eoT0DLrFxHHMbdDQaY');
 let LANG=localStorage.getItem('homes-lang')||'ko';
 function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 const ROW_LABELS={ko:['문의 · 확인 단계','계약 체결 단계','확정 · 입주 단계'],en:['Inquiry & Verification','Contract Process','Finalization & Move-In']};
-
-function renderSteps(){
-  const steps=D.steps&&D.steps.length?D.steps:getDefaultSteps();
-  const rows=[steps.slice(0,4),steps.slice(4,8),steps.slice(8,12)];
-  const el=document.getElementById('steps-main');
-  el.innerHTML=rows.map((row,ri)=>`
+async function renderSteps(){
+  const{data}=await SB.from('anam_steps').select('*').order('sort_order');
+  if(!data||!data.length)return;
+  const rows=[data.slice(0,4),data.slice(4,8),data.slice(8,12)];
+  document.getElementById('steps-main').innerHTML=rows.map((row,ri)=>`
     <div class="row-label ko">${ROW_LABELS.ko[ri]||''}</div>
     <div class="row-label en">${ROW_LABELS.en[ri]||''}</div>
     <div class="grid">
-      ${row.map((s,si)=>{
-        const isOpt=s.optional;
-        const isFin=ri===2&&si===2;
+      ${row.map(s=>{
+        const isOpt=s.is_optional;
+        const isFin=s.num==='11';
         const numCls=isOpt?'opt':isFin?'fin':'';
         const cardCls=isOpt?'optional':isFin?'final':'';
-        const btnUrlKo=s.btn_url_ko||s.btn_url||'';
-        const btnUrlEn=s.btn_url_en||s.btn_url||'';
-        const hasBtnKo=s.btn_label_ko&&btnUrlKo;
-        const hasBtnEn=s.btn_label_en&&btnUrlEn;
-        return `<div class="step-card ${cardCls}">
+        const hasBtnKo=s.btn_label_ko&&s.btn_url_ko;
+        const hasBtnEn=s.btn_label_en&&s.btn_url_en;
+        return`<div class="step-card ${cardCls}">
           ${isOpt?`<span class="opt-badge"><span class="ko">선택</span><span class="en">Optional</span></span>`:''}
           <div class="step-num ${numCls}">${esc(s.num)}</div>
           <div class="step-title ko">${esc(s.title_ko)}</div>
           <div class="step-title en">${esc(s.title_en)}</div>
           <div class="step-desc ko">${esc(s.desc_ko)}</div>
           <div class="step-desc en">${esc(s.desc_en)}</div>
-          ${hasBtnKo?`<a class="step-btn ko" href="${esc(btnUrlKo)}" target="_blank">${esc(s.btn_label_ko)} →</a>`:''}
-          ${hasBtnEn?`<a class="step-btn en" href="${esc(btnUrlEn)}" target="_blank">${esc(s.btn_label_en)} →</a>`:''}
+          ${hasBtnKo?`<a class="step-btn ko" href="${esc(s.btn_url_ko)}" target="_blank">${esc(s.btn_label_ko)} →</a>`:''}
+          ${hasBtnEn?`<a class="step-btn en" href="${esc(s.btn_url_en)}" target="_blank">${esc(s.btn_label_en)} →</a>`:''}
         </div>`;
       }).join('')}
       ${row.length<4?Array(4-row.length).fill('<div></div>').join(''):''}
     </div>`).join('');
   setLang(LANG);
 }
-
-function getDefaultSteps(){return[{num:'1',title_ko:'문의 내용 접수 및 상담 진행',title_en:'Inquiry & Initial Consultation',desc_ko:'이메일을 통해 문의 내용을 접수한 후, 희망 입주일, 퇴실일, 희망 타입 등을 기준으로 상담을 진행합니다.',desc_en:'Submit your inquiry via email. Our team will consult on your desired move-in date, check-out date, and room type.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'1-1',title_ko:'투어 진행',title_en:'Property Tour',desc_ko:'오프라인 방문 또는 온라인(영상통화) 투어 가능. 평일 10:00~18:00 (KST). 입주일까지 기간이 많이 남은 경우 동일 타입의 다른 호실을 안내할 수 있습니다.',desc_en:'Tours available in person or via video call. Weekdays 10:00 AM–6:00 PM (KST). If move-in is far off, we may show a similar room of the same type.',optional:true,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'2',title_ko:'계약 가능 여부 확인',title_en:'Availability Confirmation',desc_ko:'희망 입주일, 퇴실일, 희망 타입을 기준으로 계약 가능 여부를 확인합니다.',desc_en:'We will verify availability based on your desired move-in date, check-out date, and room type.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'3',title_ko:'계약 정보 전달',title_en:'Document Submission',desc_ko:'여권 사본, 이메일 주소, 비상연락처(이름/관계/연락처), 주소를 이메일로 전달해 주세요.',desc_en:'Please send via email: copy of passport, email address, emergency contact (name/relationship/phone), and address.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'4',title_ko:'계약 조건 및 납부 금액 안내',title_en:'Contract Terms & Payment Details',desc_ko:'보증금, 임대료, 관리비, 퇴실청소비, 입금 일정 등을 정리해 안내드립니다.',desc_en:'We will provide a detailed breakdown of deposit, rent, maintenance, cleaning fee, and payment schedule.',optional:false,btn_label_ko:'입금 스케줄 예시',btn_label_en:'Payment Schedule',btn_url_ko:'',btn_url_en:''},{num:'5',title_ko:'계약서 발송',title_en:'Contract Sent',desc_ko:'전달해주신 정보를 바탕으로 계약서를 작성하여 이메일로 보내드립니다.',desc_en:'We will prepare your contract using the submitted information and send it to your email.',optional:false,btn_label_ko:'계약서 예시',btn_label_en:'Contract Example',btn_url_ko:'',btn_url_en:''},{num:'6',title_ko:'계약서 서명',title_en:'Contract Signing',desc_ko:'계약 내용을 확인하신 후 온라인으로 서명해 주시면 됩니다.',desc_en:'Review the contract and sign it online.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'7',title_ko:'계약금 납부',title_en:'Contract Deposit Payment',desc_ko:'계약서 서명 후 안내된 계약금을 지정 계좌로 입금해 주세요.',desc_en:'After signing, transfer the contract deposit to the designated account.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'8',title_ko:'입주 안내 발송',title_en:'Move-In Guide Sent',desc_ko:'입주 전 입주 가이드와 호실 이용 안내를 이메일로 전달드립니다.',desc_en:'Before your move-in date, we will send a comprehensive resident guide and room instructions via email.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'9',title_ko:'입금 확인 및 계약 확정',title_en:'Payment Confirmed & Contract Finalized',desc_ko:'입금 확인 후 계약이 최종 확정됩니다. 입금 기한은 입주일 기준이며, 입주일이 휴일인 경우 직전 평일을 기준으로 합니다.',desc_en:'Once payment is confirmed, your contract is officially finalized. The deadline is based on your move-in date; if it falls on a holiday, the preceding business day applies.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'10',title_ko:'잔금 납부',title_en:'Balance Payment',desc_ko:'입금 스케줄에 따라 보증금 잔금과 입주월의 임대료 및 관리비를 납부해 주세요.',desc_en:"Pay the remaining deposit balance along with the first month's rent and maintenance fee according to the payment schedule.",optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''},{num:'11',title_ko:'납부 확인 · 비밀번호 전달 및 입주',title_en:'Move-In & Key Handover',desc_ko:'납부 확인 시 호실 비밀번호를 전달드립니다. 입주 후 문의사항은 카카오톡 입주민 채널을 통해 접수해 주세요.',desc_en:'Upon payment confirmation, your room passcode will be sent. After moving in, all inquiries can be submitted via the KakaoTalk resident channel.',optional:false,btn_label_ko:'',btn_label_en:'',btn_url_ko:'',btn_url_en:''}];}
-
-setLang(LANG);
-renderSteps();
+setLang(LANG);renderSteps();
 </script>
 </body>
 </html>

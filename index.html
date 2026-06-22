@@ -22,16 +22,16 @@ nav{
   position:sticky;top:0;z-index:200;
   background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
-  height:64px;display:flex;align-items:center;justify-content:space-between;
+  height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
   padding:0 var(--px);
 }
 .nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:2px;}
 .nav-logo span{color:#444;font-weight:700;}
-.nav-links{display:flex;align-items:center;gap:2px;}
+.nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
 .nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);}
 .nav-link:hover,.nav-link.active{color:var(--ink);}
 .nav-link.active{font-weight:700;}
-.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;margin-left:10px;}
+.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
 .lang-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;}
 .lang-btn.active{background:var(--navy);color:#fff;}
 
@@ -72,7 +72,7 @@ nav{
   margin-bottom:10px;
 }
 .hero-headline em{color:var(--gold);font-style:normal;}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.45);font-weight:400;letter-spacing:.01em;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.62);font-weight:400;letter-spacing:.01em;}
 
 /* ── SECTION LABELS ── */
 .s-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
@@ -195,17 +195,17 @@ span.ko,span.en{display:none;}
     <a class="nav-link active" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
     <a class="nav-link" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
     <a class="nav-link" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
-      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
   <div class="inner" style="text-align:center;">
-    <div class="hero-eyebrow">Co-living · Seoul · Korea University</div>
+    <div class="hero-eyebrow">Co-living · Seoul</div>
     <div class="hero-headline ko">Live your <em>Life</em></div>
     <div class="hero-headline en">Live your <em>Life</em></div>
     <div class="hero-sub ko" style="margin-top:14px;">홈즈 안암에서 나만의 일상을 시작하세요</div>
@@ -214,10 +214,10 @@ span.ko,span.en{display:none;}
 </div>
 
 <!-- ① YOUTUBE -->
-<section class="section sec-navy" style="padding:56px 0;">
+<section class="section sec-white" style="padding:56px 0;border-bottom:1px solid var(--line);">
   <div class="inner">
-    <div class="s-eyebrow" style="color:rgba(255,255,255,.35);">HOMES Anam</div>
-    <div class="s-title-lg" style="color:#fff;margin-bottom:0;">
+    <div class="s-eyebrow">HOMES Anam</div>
+    <div class="s-title-lg" style="margin-bottom:0;">
       <span class="ko">공간을 영상으로 만나보세요</span>
       <span class="en">See the space in action</span>
     </div>
@@ -239,8 +239,8 @@ span.ko,span.en{display:none;}
 <section class="section sec-white">
   <div class="inner">
     <div class="s-eyebrow">Coliving Space</div>
-    <div class="s-title-lg ko">입주민을 위한 공유 공간</div>
-    <div class="s-title-lg en">Shared Spaces for Residents</div>
+    <div class="s-title-lg ko">공용공간</div>
+    <div class="s-title-lg en">Community Area</div>
     <div style="margin-top:28px;">
       <div class="space-tabs" id="space-tabs"></div>
       <div class="space-content" id="space-content"></div>
@@ -402,7 +402,7 @@ function slideRoom(ri,dir){
 function driveUrl(url){if(!url)return'';const m=url.match(/\/d\/([^/]+)/);return m?`https://drive.google.com/uc?export=view&id=${m[1]}`:url;}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function getDefault(){return{popup:[{img:'',caption_ko:'현재 진행 중인 프로모션',caption_en:'Current Promotion'}],youtube:'https://www.youtube.com/embed/g4gookv6YTY',info:[{label_ko:'위치',val_ko:'서울특별시 성북구 고려대로 30',label_en:'Location',val_en:'30, Korea University-ro, Seongbuk-gu, Seoul'},{label_ko:'보증금 / 임대료',val_ko:'200만원 / 월 125~135만원',label_en:'Deposit / Rent',val_en:'2,000,000 KRW / 1,250,000~1,350,000 KRW/mo'},{label_ko:'계주 인원',val_ko:'1인',label_en:'Occupancy',val_en:'1 person'},{label_ko:'계약 기간',val_ko:'1개월 이상',label_en:'Lease Term',val_en:'1 month or more'},{label_ko:'퇴실청소비',val_ko:'120,000원',label_en:'Cleaning Fee',val_en:'120,000 KRW'},{label_ko:'근린역 도보',val_ko:'5분',label_en:'Nearest Station',val_en:'5 min walk'},{label_ko:'관리비',val_ko:'고정 월 259,000원 (수도·전기·가스·인터넷 포함)',label_en:'Maintenance',val_en:'Fixed 259,000 KRW/mo (utilities incl.)'},{label_ko:'수지',val_ko:'10대',label_en:'Units',val_en:'10 units'},{label_ko:'입대인',val_ko:'-',label_en:'Landlord',val_en:'-'},{label_ko:'입주 가능일',val_ko:'협의',label_en:'Move-in Date',val_en:'By arrangement'}],spaces:[{id:'lounge',name_ko:'오픈 라운지',name_en:'Open Lounge',desc_ko:'커피바와 키친, 소파 존이 어우러진 오픈 라운지. 입주민 누구나 자유롭게 머물 수 있는 공간으로, 스터디룸·미팅룸·피트니스룸·런드리룸과 자연스럽게 연결되는 일상의 중심입니다.',desc_en:'An open lounge with a coffee bar, kitchen, and sofa area. The central hub connecting all shared spaces.',tags_ko:'자유로운 휴식,공간의 중심,소소한 수다',tags_en:'Free Rest,Hub,Casual Chat',img:''},{id:'meeting',name_ko:'미팅룸',name_en:'Meeting Room',desc_ko:'개인 프로젝트, 상담, 과외 등 다양한 목적에 맞게 활용할 수 있는 공간입니다.',desc_en:'A flexible space for personal projects, consultations, tutoring, and more.',tags_ko:'개인 프로젝트,소그룹 미팅',tags_en:'Personal Project,Small Group',img:''},{id:'study',name_ko:'스터디룸',name_en:'Study Room',desc_ko:'자유로운 분위기 속에서도 몰입이 가능한 공간. 자기계발과 학업, 업무까지 일상의 배움과 성장을 유연하게 이어갈 수 있습니다.',desc_en:'A space for deep focus. Perfect for studying, self-development, and work.',tags_ko:'집중 학습,자기계발',tags_en:'Deep Focus,Self-Development',img:''},{id:'fitness',name_ko:'피트니스룸',name_en:'Fitness Room',desc_ko:'기본 운동기구와 러닝머신을 갖춘 피트니스 공간. 멀리 나가지 않아도 집에서 가장 가까운 곳에서 활력을 채울 수 있습니다.',desc_en:'Equipped with basic exercise machines and a treadmill.',tags_ko:'운동기구,러닝머신',tags_en:'Equipment,Treadmill',img:''},{id:'relax',name_ko:'릴렉스룸',name_en:'Relax Room',desc_ko:'조용한 분위기 속에서 나만의 시간을 보낼 수 있는 공간입니다. 안마의자에 몸을 맡기고 하루의 피로를 풀어보세요.',desc_en:'A quiet retreat with massage chairs. Unwind and recharge after a long day.',tags_ko:'안마의자,조용한 휴식',tags_en:'Massage Chair,Quiet Rest',img:''},{id:'wellness',name_ko:'웰니스룸',name_en:'Wellness Room',desc_ko:'입주민이 함께 모여 영화를 보거나, 가볍게 이야기를 나누며 시간을 보낼 수 있는 공간입니다.',desc_en:'A cozy room for movie nights and casual conversations.',tags_ko:'영화 감상,커뮤니티',tags_en:'Movie Nights,Community',img:''}],rooms:[{id:'work',type_ko:'A Type · 워크형',type_en:'A Type · Work',name_ko:'워크형',name_en:'Work Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']},{id:'walkin',type_ko:'B Type · 수납강화형',type_en:'B Type · Walk-in Closet',name_ko:'수납강화형',name_en:'Walk-in Closet Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:false,imgs:['','']},{id:'full',type_ko:'C Type · 풀퍼니시드형',type_en:'C Type · Full-Furnished',name_ko:'풀퍼니시드형',name_en:'Full-Furnished Type',rent_ko:'월 135만원',rent_en:'1,350,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:false,badge_contract:true,imgs:['','']},{id:'multi',type_ko:'D Type · 멀티형',type_en:'D Type · Multi',name_ko:'멀티형',name_en:'Multi Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/mo',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/mo (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']}],steps:[],detail_cols:[],detail_items:[]};}
+function getDefault(){return{popup:[{img:'',caption_ko:'현재 진행 중인 프로모션',caption_en:'Current Promotion'}],youtube:'https://www.youtube.com/embed/g4gookv6YTY',info:[{label_ko:'위치',val_ko:'서울특별시 성북구 고려대로 30',label_en:'Location',val_en:'30, Korea University-ro, Seongbuk-gu, Seoul'},{label_ko:'보증금 / 임대료',val_ko:'200만원 / 월 125~135만원',label_en:'Deposit / Rent',val_en:'2,000,000 KRW / 1,250,000~1,350,000 KRW/month'},{label_ko:'계주 인원',val_ko:'1인',label_en:'Occupancy',val_en:'1 person'},{label_ko:'계약 기간',val_ko:'1개월 이상',label_en:'Lease Term',val_en:'1 month or more'},{label_ko:'퇴실청소비',val_ko:'120,000원',label_en:'Cleaning Fee',val_en:'120,000 KRW'},{label_ko:'근린역 도보',val_ko:'5분',label_en:'Nearest Station',val_en:'5 min walk'},{label_ko:'관리비',val_ko:'고정 월 259,000원 (수도·전기·가스·인터넷 포함)',label_en:'Maintenance',val_en:'Fixed 259,000 KRW/month (utilities incl.)'},{label_ko:'수지',val_ko:'10대',label_en:'Units',val_en:'10 units'},{label_ko:'입대인',val_ko:'-',label_en:'Landlord',val_en:'-'},{label_ko:'입주 가능일',val_ko:'협의',label_en:'Move-in Date',val_en:'By arrangement'}],spaces:[{id:'lounge',name_ko:'오픈 라운지',name_en:'Open Lounge',desc_ko:'커피바와 키친, 소파 존이 어우러진 오픈 라운지. 입주민 누구나 자유롭게 머물 수 있는 공간으로, 스터디룸·미팅룸·피트니스룸·런드리룸과 자연스럽게 연결되는 일상의 중심입니다.',desc_en:'An open lounge with a coffee bar, kitchen, and sofa area. The central hub connecting all shared spaces.',tags_ko:'자유로운 휴식,공간의 중심,소소한 수다',tags_en:'Free Rest,Hub,Casual Chat',img:''},{id:'meeting',name_ko:'미팅룸',name_en:'Meeting Room',desc_ko:'개인 프로젝트, 상담, 과외 등 다양한 목적에 맞게 활용할 수 있는 공간입니다.',desc_en:'A flexible space for personal projects, consultations, tutoring, and more.',tags_ko:'개인 프로젝트,소그룹 미팅',tags_en:'Personal Project,Small Group',img:''},{id:'study',name_ko:'스터디룸',name_en:'Study Room',desc_ko:'자유로운 분위기 속에서도 몰입이 가능한 공간. 자기계발과 학업, 업무까지 일상의 배움과 성장을 유연하게 이어갈 수 있습니다.',desc_en:'A space for deep focus. Perfect for studying, self-development, and work.',tags_ko:'집중 학습,자기계발',tags_en:'Deep Focus,Self-Development',img:''},{id:'fitness',name_ko:'피트니스룸',name_en:'Fitness Room',desc_ko:'기본 운동기구와 러닝머신을 갖춘 피트니스 공간. 멀리 나가지 않아도 집에서 가장 가까운 곳에서 활력을 채울 수 있습니다.',desc_en:'Equipped with basic exercise machines and a treadmill.',tags_ko:'운동기구,러닝머신',tags_en:'Equipment,Treadmill',img:''},{id:'relax',name_ko:'릴렉스룸',name_en:'Relax Room',desc_ko:'조용한 분위기 속에서 나만의 시간을 보낼 수 있는 공간입니다. 안마의자에 몸을 맡기고 하루의 피로를 풀어보세요.',desc_en:'A quiet retreat with massage chairs. Unwind and recharge after a long day.',tags_ko:'안마의자,조용한 휴식',tags_en:'Massage Chair,Quiet Rest',img:''},{id:'wellness',name_ko:'웰니스룸',name_en:'Wellness Room',desc_ko:'입주민이 함께 모여 영화를 보거나, 가볍게 이야기를 나누며 시간을 보낼 수 있는 공간입니다.',desc_en:'A cozy room for movie nights and casual conversations.',tags_ko:'영화 감상,커뮤니티',tags_en:'Movie Nights,Community',img:''}],rooms:[{id:'work',type_ko:'A Type · 워크형',type_en:'A Type · Work',name_ko:'워크형',name_en:'Work Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/month',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/month (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']},{id:'walkin',type_ko:'B Type · 수납강화형',type_en:'B Type · Walk-in Closet',name_ko:'수납강화형',name_en:'Walk-in Closet Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/month',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/month (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:false,imgs:['','']},{id:'full',type_ko:'C Type · 풀퍼니시드형',type_en:'C Type · Full-Furnished',name_ko:'풀퍼니시드형',name_en:'Full-Furnished Type',rent_ko:'월 135만원',rent_en:'1,350,000 KRW/month',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/month (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:false,badge_contract:true,imgs:['','']},{id:'multi',type_ko:'D Type · 멀티형',type_en:'D Type · Multi',name_ko:'멀티형',name_en:'Multi Type',rent_ko:'월 125만원',rent_en:'1,250,000 KRW/month',deposit_ko:'보증금 200만원',deposit_en:'Deposit 2,000,000 KRW',mgmt_ko:'고정관리비 259,000원/월 (수도·전기·가스·인터넷 포함)',mgmt_en:'Fixed 259,000 KRW/month (utilities incl.)',clean_ko:'퇴실청소비 120,000원',clean_en:'Checkout cleaning 120,000 KRW',badge_tour:true,badge_contract:true,imgs:['','']}],steps:[],detail_cols:[],detail_items:[]};}
 
 setLang(LANG);
 renderPopup();

@@ -3,320 +3,578 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HOMES Anam | 홈즈 안암</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>홈즈 안암 | 공실 안내</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;
-  --gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;
-  --font:'Outfit','Pretendard',-apple-system,sans-serif;
-  --max:880px;--px:72px;--px-m:24px;
+:root {
+  --gold: #FFCF0D;
+  --navy: #020425;
+  --cream: #F4F2EC;
+  --line: #E7DDC6;
+  --soft: #f6f7f9;
+  --gray: #6F7A83;
+  --font: 'Outfit', 'Noto Sans KR', -apple-system, sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font);background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;}
-nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 var(--px);}
-.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:var(--gold);text-decoration:none;}
-.nav-logo span{color:#444;font-weight:700;}
-.nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
-.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);}
-.nav-link:hover,.nav-link.active{color:var(--ink);}
-.nav-link.active{font-weight:700;}
-.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
-.lang-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;}
-.lang-btn.active{background:var(--navy);color:#fff;}
-/* POPUP */
-.popup-overlay{position:fixed;inset:0;background:rgba(2,4,37,.5);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;}
-.popup-overlay.open{opacity:1;pointer-events:auto;}
-.popup-box{background:#fff;border-radius:20px;overflow:hidden;width:min(460px,92vw);box-shadow:0 24px 64px rgba(2,4,37,.22);}
-.popup-slide{display:none;}.popup-slide.active{display:block;}
-.popup-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-.popup-ph{width:100%;aspect-ratio:4/3;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:14px;font-weight:600;}
-.popup-dots{display:flex;justify-content:center;gap:6px;padding:12px 0 4px;}
-.popup-dot{width:6px;height:6px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:.15s;}
-.popup-dot.active{background:var(--navy);width:18px;border-radius:3px;}
-.popup-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 18px;}
-.popup-close{font-family:var(--font);font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:7px;}
-.popup-close:hover{background:var(--soft);}
-.popup-today{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;}
-/* LAYOUT */
-.inner{max-width:var(--max);margin:0 auto;padding:0 var(--px);}
-.section{padding:72px 0;}
-/* HERO */
-.hero{background:var(--navy);padding:64px 0 60px;text-align:center;}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:20px;}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:rgba(255,255,255,.2);}
-.hero-headline{font-size:clamp(32px,5vw,52px);font-weight:900;color:#fff;line-height:1.15;letter-spacing:-0.03em;margin-bottom:10px;}
-.hero-headline em{color:var(--gold);font-style:normal;}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.62);font-weight:400;letter-spacing:.01em;}
-/* LABELS */
-.s-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-.s-title{font-size:22px;font-weight:800;line-height:1.3;margin-bottom:4px;color:var(--ink);}
-.s-title-lg{font-size:26px;font-weight:800;line-height:1.3;margin-bottom:4px;color:var(--ink);}
-/* YT */
-.yt-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;background:#000;margin-top:28px;}
-.yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-/* INFO TABLE */
-.tbl-wrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:28px;}
-.info-tbl{width:100%;border-collapse:collapse;}
-.info-tbl tr{border-bottom:1px solid var(--line);}
-.info-tbl tr:last-child{border-bottom:none;}
-.info-tbl td{padding:13px 18px;font-size:13.5px;line-height:1.6;vertical-align:top;color:var(--ink);}
-.info-tbl td.lbl{width:25%;font-weight:700;background:var(--soft);border-right:1px solid var(--line);color:#555;font-size:12.5px;}
-.info-tbl td.lbl2{width:25%;font-weight:700;background:var(--soft);border-right:1px solid var(--line);border-left:1px solid var(--line);color:#555;font-size:12.5px;}
-/* SPACES */
-.space-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:32px;}
-.space-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--line);font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;background:#fff;transition:.15s;}
-.space-tab:hover{border-color:#aaa;color:var(--ink);}
-.space-tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
-.space-content{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
-.space-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;}
-.space-ph{width:100%;aspect-ratio:4/3;background:var(--cream);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:13px;}
-.space-name{font-size:20px;font-weight:800;margin-bottom:12px;line-height:1.3;}
-.space-desc{font-size:14px;color:#555;line-height:1.85;margin-bottom:16px;}
-.space-tags{display:flex;flex-wrap:wrap;gap:6px;}
-.space-tag{padding:4px 12px;border-radius:6px;background:var(--soft);font-size:11.5px;font-weight:600;color:var(--muted);border:1px solid var(--line);}
-/* ROOMS */
-.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px;}
-.room-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease;}
-.room-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08);}
-.room-slide-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--cream);}
-.room-slide-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .35s;}
-.room-slide-img.active{opacity:1;}
-.room-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:13px;position:absolute;inset:0;}
-.slide-btn{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font-size:15px;z-index:2;color:var(--ink);display:flex;align-items:center;justify-content:center;}
-.slide-btn.prev{left:10px;}.slide-btn.next{right:10px;}
-.room-badges{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;z-index:3;}
-.badge-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
-.badge-tour{background:var(--navy);color:#fff;}
-.badge-contract{background:var(--gold);color:var(--navy);}
-.room-body{padding:18px 20px 22px;}
-.room-type{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
-.room-name{font-size:16px;font-weight:800;margin-bottom:14px;color:var(--ink);}
-.room-price{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-0.02em;}
-.room-deposit{font-size:12px;color:var(--muted);margin-top:3px;}
-.room-hr{border:none;border-top:1px solid var(--line);margin:14px 0;}
-.room-detail{display:flex;gap:8px;font-size:12px;color:var(--muted);margin-bottom:5px;line-height:1.5;}
-.room-detail-lbl{font-weight:700;color:#555;min-width:52px;flex-shrink:0;}
-/* FLOAT */
-.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(2,4,37,.18);transition:.15s;}
-.float-btn:hover{background:#0d1460;transform:translateY(-1px);}
-.sec-white{background:#fff;}
-.sec-soft{background:var(--soft);}
-.ko,.en{display:none;}
-.lang-ko .ko{display:block;}
-.lang-en .en{display:block;}
-span.ko,span.en{display:none;}
-.lang-ko span.ko{display:inline;}
-.lang-en span.en{display:inline;}
-@media(max-width:720px){
-  nav{padding:0 var(--px-m);}
-  .inner{padding:0 var(--px-m);}
-  .section{padding:52px 0;}
-  .hero{padding:48px 0 44px;}
-  .space-content{grid-template-columns:1fr;gap:24px;}
-  .rooms-grid{grid-template-columns:1fr;}
-  .s-title-lg{font-size:21px;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); color: var(--navy); background: #fff; }
+a { text-decoration: none; color: inherit; }
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
 }
+.logo-block { display: flex; flex-direction: column; gap: 1px; }
+.logo-top { display: flex; align-items: baseline; gap: 6px; }
+.logo-brand { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; color: var(--navy); }
+.logo-sub { font-size: 13px; font-weight: 600; color: var(--navy); letter-spacing: -0.2px; }
+.logo-addr-row { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+.logo-addr { font-size: 11px; color: var(--gray); font-weight: 400; }
+.lang-toggle {
+  display: flex; align-items: center;
+  border: 1px solid var(--line); border-radius: 8px;
+  overflow: hidden; flex-shrink: 0;
+}
+.lang-btn {
+  padding: 3px 10px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--gray); font-family: var(--font);
+  transition: background .15s, color .15s;
+}
+.lang-btn.active { background: var(--navy); color: #fff; }
+.top-bar {
+  background: var(--navy);
+  padding: 20px 24px;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch;
+}
+.top-btn {
+  display: flex; align-items: center; gap: 9px;
+  padding: 14px 22px; border-radius: 12px;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+  border: none; transition: opacity .15s; text-decoration: none;
+}
+.top-btn:hover { opacity: .85; }
+.top-btn.primary { background: var(--gold); color: var(--navy); }
+.top-btn.outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.35); }
+.tab-nav {
+  position: sticky; top: 68px; z-index: 90;
+  background: #fff; border-bottom: 1px solid var(--line);
+  display: flex; padding: 0 24px; overflow-x: auto;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-item {
+  padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--gray);
+  cursor: pointer; white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.tab-item.active { color: var(--navy); border-bottom-color: var(--gold); }
+.tab-item:hover:not(.active) { color: var(--navy); }
+.tab-content { display: none; padding: 28px 24px; max-width: 1100px; margin: 0 auto; }
+.tab-content.active { display: block; }
+.section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--gray); margin-bottom: 16px;
+}
+.vacancy-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 8px;
+}
+.vacancy-count { font-size: 13px; color: var(--gray); }
+.vacancy-count strong { color: var(--navy); font-weight: 700; }
+.badge { display: inline-block; background: var(--gold); color: var(--navy); font-weight: 800; font-size: 11px; padding: 3px 10px; border-radius: 6px; }
+/* 공실 = 빨간색, 입주 즉시 가능 */
+.badge.vacant { background: #ef4444; color: #fff; }
+/* 공실예정 = 초록색, 투어가능일이 미래 */
+.badge.upcoming { background: #22c55e; color: #fff; }
+.update-time { font-size: 11px; color: var(--gray); }
+.floor-section { margin-bottom: 24px; }
+.floor-label {
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  background: var(--cream); border-radius: 8px;
+  padding: 6px 14px; margin-bottom: 10px; display: inline-block;
+}
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.room-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fff; transition: box-shadow .15s; }
+.room-card:hover { box-shadow: 0 2px 12px rgba(2,4,37,.07); }
+.room-card.vacant { border-color: #ef4444; background: #fff5f5; }
+.room-card.upcoming { border-color: var(--gold); background: #fffdf0; }
+.room-no { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+.room-type { font-size: 11px; color: var(--gray); font-weight: 500; margin-bottom: 8px; }
+.room-fee { font-size: 12px; color: var(--navy); font-weight: 600; line-height: 1.7; }
+.room-fee span { display: block; }
+.tour-date { margin-top: 8px; font-size: 11px; color: var(--gray); background: var(--soft); border-radius: 6px; padding: 4px 8px; }
+.info-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.info-table th, .info-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.info-table th { font-weight: 600; color: var(--navy); background: var(--cream); width: 28%; white-space: nowrap; }
+.info-table td { color: #333; line-height: 1.65; }
+.info-table tr:last-child th, .info-table tr:last-child td { border-bottom: none; }
+.doc-list { margin-top: 28px; }
+.doc-accordion { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+.doc-accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer;
+  background: var(--cream); font-size: 13px; font-weight: 700; color: var(--navy);
+  user-select: none; transition: background .15s;
+}
+.doc-accordion-header:hover { background: #ece9e0; }
+.doc-accordion-arrow { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: transform .2s; color: var(--gray); font-size: 11px; }
+.doc-accordion.open .doc-accordion-arrow { transform: rotate(180deg); }
+.doc-accordion-body { display: none; padding: 16px 18px; font-size: 13px; line-height: 1.85; color: #333; background: #fff; border-top: 1px solid var(--line); }
+.doc-accordion.open .doc-accordion-body { display: block; }
+.type-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.type-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; }
+.type-thumb { width: 100%; aspect-ratio: 4/3; background: var(--cream); display: flex; align-items: center; justify-content: center; flex-direction: column; font-size: 13px; color: var(--gray); font-weight: 500; }
+.type-info { padding: 16px; }
+.type-name { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.type-price { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; }
+.price-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.price-label { color: var(--gray); font-weight: 400; }
+.space-note { background: var(--soft); border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+.space-note h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.space-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.space-tag { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--navy); }
+.loader { display: flex; align-items: center; justify-content: center; padding: 60px; color: var(--gray); font-size: 14px; gap: 10px; }
+.spinner { width: 18px; height: 18px; border: 2.5px solid var(--line); border-top-color: var(--navy); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 680px) {
+  header { padding: 0 16px; height: 64px; }
+  .logo-sub { font-size: 12px; }
+  .top-bar { padding: 16px; }
+  .top-btn { padding: 12px 16px; font-size: 13px; flex: 1; justify-content: center; }
+  .tab-nav { top: 64px; }
+  .tab-content { padding: 20px 16px; }
+  .info-table th { width: 35%; font-size: 12px; }
+  .room-grid { grid-template-columns: repeat(2, 1fr); }
+  .type-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
+  .room-grid { grid-template-columns: 1fr; }
+  .type-grid { grid-template-columns: 1fr; }
+}
+.type-slider {
+  position: relative; width: 100%; aspect-ratio: 4/3;
+  overflow: hidden; background: var(--cream);
+}
+.type-slider .slide { display: none; width: 100%; height: 100%; }
+.type-slider .slide.active { display: block; }
+.slide-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(2,4,37,.45); color: #fff;
+  border: none; border-radius: 50%; width: 28px; height: 28px;
+  font-size: 18px; line-height: 26px; text-align: center;
+  cursor: pointer; z-index: 2; padding: 0;
+  transition: background .15s;
+}
+.slide-btn:hover { background: rgba(2,4,37,.75); }
+.slide-btn.prev { left: 8px; }
+.slide-btn.next { right: 8px; }
+.slide-dots {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,.5); cursor: pointer; transition: background .15s;
+}
+.dot.active { background: #fff; }
 </style>
 </head>
-<body class="lang-ko">
+<body>
 
-<div class="popup-overlay" id="popup">
-  <div class="popup-box">
-    <div id="popup-slides"></div>
-    <div class="popup-dots" id="popup-dots"></div>
-    <div class="popup-footer">
-      <label class="popup-today"><input type="checkbox" id="popup-today-chk" onchange="popupSkipToday()"><span class="ko">오늘 하루 보지 않기</span><span class="en">Don't show today</span></label>
-      <button class="popup-close" onclick="closePopup()"><span class="ko">닫기</span><span class="en">Close</span> ✕</button>
+<header>
+  <div class="logo-block">
+    <div class="logo-top">
+      <span class="logo-brand">HOMES</span>
+      <span class="logo-sub" id="hdr-sub">Studio 안암 공실안내</span>
+    </div>
+    <div class="logo-addr-row">
+      <span class="logo-addr">서울시 성북구 고려대로 30 &nbsp;/&nbsp; 30 Goryeodae-ro, Seongbuk-gu, Seoul</span>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">KO</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
     </div>
   </div>
+</header>
+
+<div class="top-bar">
+  <a id="btn-homepage" href="#" target="_blank" class="top-btn primary" data-ko="홈즈 안암 홈페이지" data-en="Homes Anam Website">홈즈 안암 홈페이지</a>
+  <a id="btn-youtube" href="#" target="_blank" class="top-btn outline" data-ko="타입별 투어 영상" data-en="Room Tour Videos">타입별 투어 영상</a>
 </div>
 
-<nav>
-  <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
-  <div class="nav-links">
-    <a class="nav-link active" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
-    <a class="nav-link" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
-    <a class="nav-link" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
-  </div>
-  <div class="lang-toggle">
-    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
-    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-  </div>
+<nav class="tab-nav" role="tablist">
+  <div class="tab-item active" data-tab="info" data-ko="기본정보" data-en="Overview" onclick="switchTab('info')">기본정보</div>
+  <div class="tab-item" data-tab="vacancy" data-ko="공실현황" data-en="Availability" onclick="switchTab('vacancy')">공실현황</div>
+  <div class="tab-item" data-tab="photo" data-ko="타입 안내" data-en="Room Types" onclick="switchTab('photo')">타입 안내</div>
 </nav>
 
-<div class="hero">
-  <div class="inner">
-    <div class="hero-eyebrow">Co-living · Seoul</div>
-    <div class="hero-headline ko">Live your <em>Life</em></div>
-    <div class="hero-headline en">Live your <em>Life</em></div>
-    <div class="hero-sub ko" style="margin-top:14px;">홈즈 안암에서 나만의 일상을 시작하세요</div>
-    <div class="hero-sub en" style="margin-top:14px;">Start your own daily rhythm at HOMES Anam</div>
-  </div>
+<div id="tab-info" class="tab-content active">
+  <div class="loader" id="info-loader"><div class="spinner"></div> <span id="loading-txt">데이터를 불러오는 중...</span></div>
+  <div id="info-body" style="display:none"></div>
+</div>
+<div id="tab-vacancy" class="tab-content">
+  <div class="loader" id="vacancy-loader"><div class="spinner"></div> <span class="loading-txt">데이터를 불러오는 중...</span></div>
+  <div id="vacancy-body" style="display:none"></div>
+</div>
+<div id="tab-photo" class="tab-content">
+  <div class="loader" id="photo-loader"><div class="spinner"></div> <span class="loading-txt">데이터를 불러오는 중...</span></div>
+  <div id="photo-body" style="display:none"></div>
 </div>
 
-<section class="section sec-white" style="padding:56px 0;border-bottom:1px solid var(--line);">
-  <div class="inner">
-    <div class="s-eyebrow">HOMES Anam</div>
-    <div class="s-title-lg ko">공간을 영상으로 만나보세요</div>
-    <div class="s-title-lg en">See the space in action</div>
-    <div class="yt-wrap"><iframe id="yt-frame" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
-  </div>
-</section>
-
-<section class="section sec-soft">
-  <div class="inner">
-    <div class="s-eyebrow">Basic Info</div>
-    <div class="s-title ko">기본 정보</div>
-    <div class="s-title en">Property Information</div>
-    <div class="tbl-wrap"><table class="info-tbl" id="info-tbl"></table></div>
-  </div>
-</section>
-
-<section class="section sec-white">
-  <div class="inner">
-    <div class="s-eyebrow">Coliving Space</div>
-    <div class="s-title-lg ko">공용공간</div>
-    <div class="s-title-lg en">Community Area</div>
-    <div style="margin-top:28px;">
-      <div class="space-tabs" id="space-tabs"></div>
-      <div class="space-content" id="space-content"></div>
-    </div>
-  </div>
-</section>
-
-<section class="section sec-soft">
-  <div class="inner">
-    <div class="s-eyebrow">Room Types</div>
-    <div class="s-title-lg ko">호실 타입 및 가격</div>
-    <div class="s-title-lg en">Room Types & Pricing</div>
-    <div class="rooms-grid" id="rooms-grid"></div>
-  </div>
-</section>
-
-<a class="float-btn" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
-
 <script>
-const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','sb_publishable_TuH7QP5ejpplWGn9OiSz3w_joV0ffWJ');
-let LANG=localStorage.getItem('homes-lang')||'ko';
-let popIdx=0;
-
-function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
-
-function driveUrl(url){if(!url)return'';const m=url.match(/\/d\/([^/]+)/);return m?`https://drive.google.com/uc?export=view&id=${m[1]}`:url;}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-async function renderPopup(){
-  const skip=localStorage.getItem('homes_popup_skip');
-  if(skip&&new Date(skip)>new Date())return;
-  const{data}=await SB.from('anam_popup').select('*').eq('is_active',true).order('sort_order');
-  if(!data||!data.length)return;
-  document.getElementById('popup-slides').innerHTML=data.map((s,i)=>`
-    <div class="popup-slide${i===0?' active':''}" id="pslide-${i}">
-      ${s.img?`<img class="popup-img" src="${driveUrl(s.img)}" alt="">`:`<div class="popup-ph"><span class="ko">${esc(s.caption_ko)}</span><span class="en">${esc(s.caption_en)}</span></div>`}
-    </div>`).join('');
-  if(data.length>1)document.getElementById('popup-dots').innerHTML=data.map((_,i)=>`<button class="popup-dot${i===0?' active':''}" onclick="goPopup(${i})"></button>`).join('');
-  document.getElementById('popup').classList.add('open');
+let currentLang = 'ko';
+const T = {
+  ko: {
+    loading:'데이터를 불러오는 중...',occupied:'입주 중',vacant:'공실',upcoming:'공실예정',tourDate:'투어가능일',
+    deposit:'보증금',rent:'월세',mgmt:'관리비',total:'합계',units:'세대',vacantUnits:'공실',
+    cache:'기준 (10분 캐시)',commonSpace:'공용 공간',typeGuide:'타입별 안내',includes:'포함',
+    photoNote:'실제 사진은 홈페이지에서 확인하실 수 있습니다.',photoLink:'홈즈 안암 홈페이지 바로가기 →',
+    spaces:['2F 라운지','세탁실 (건조기·세탁기)','트레이닝룸','릴렉스룸','9F 웰니스룸','1F 우편함·택배보관함'],
+    infoTitle:'안암스튜디오 기본정보',docTitle:'계약 시 필요 서류',totalLabel:'전체',errPrefix:'오류: ',
+  },
+  en: {
+    loading:'Loading data...',occupied:'Occupied',vacant:'Vacant',upcoming:'Coming Soon',tourDate:'Tour available',
+    deposit:'Deposit',rent:'Monthly Rent',mgmt:'Utilities (water, electricity, gas, internet incl.)',
+    total:'Total',units:'units',vacantUnits:'vacant',cache:'(10-min cache)',
+    commonSpace:'Common Areas',typeGuide:'Room Types',includes:'Includes',
+    photoNote:'View actual photos on the official website.',photoLink:'Visit Homes Anam Website →',
+    spaces:['2F Lounge','Laundry (Dryer & Washer)','Training Room','Relax Room','9F Wellness Room','1F Mailbox & Parcel Storage'],
+    infoTitle:'Homes Studio Anam — Overview',docTitle:'Documents Required for Contract',totalLabel:'Total',errPrefix:'Error: ',
+  }
+};
+const TYPE_NAME_MAP = {
+  '워크형':'Work','워크':'Work','수납강화형':'Smart Storage','수납강화':'Smart Storage',
+  '멀티벙커형':'Multi Bunker','멀티벙커':'Multi Bunker','풀퍼니시드형':'Full Furnished','풀퍼니시드':'Full Furnished',
+};
+function translateType(name) {
+  if (!name) return name;
+  if (currentLang !== 'en') return name;
+  const keys = Object.keys(TYPE_NAME_MAP).sort((a,b) => b.length - a.length);
+  for (const ko of keys) { if (name.includes(ko)) return TYPE_NAME_MAP[ko]; }
+  return name.replace(/형$/, '');
 }
-function goPopup(i){
-  document.getElementById('pslide-'+popIdx).classList.remove('active');
-  document.querySelectorAll('.popup-dot')[popIdx]?.classList.remove('active');
-  popIdx=i;
-  document.getElementById('pslide-'+i).classList.add('active');
-  document.querySelectorAll('.popup-dot')[i]?.classList.add('active');
-}
-function closePopup(){document.getElementById('popup').classList.remove('open');}
-function popupSkipToday(){if(document.getElementById('popup-today-chk').checked){const e=new Date();e.setHours(23,59,59,999);localStorage.setItem('homes_popup_skip',e.toISOString());closePopup();}}
+function t(key) { return T[currentLang][key] || T['ko'][key]; }
 
-async function renderYT(){
-  const{data}=await SB.from('anam_settings').select('value').eq('key','youtube').single();
-  if(data)document.getElementById('yt-frame').src=data.value;
-}
-
-async function renderInfo(){
-  const{data}=await SB.from('anam_settings').select('value').eq('key','info').single();
-  if(!data)return;
-  const rows=JSON.parse(data.value||'[]');
-  const pairs=[];for(let i=0;i<rows.length;i+=2)pairs.push([rows[i],rows[i+1]]);
-  document.getElementById('info-tbl').innerHTML=pairs.map(([a,b])=>`<tr>
-    <td class="lbl ko">${esc(a?.label_ko||'')}</td><td class="ko">${esc(a?.val_ko||'')}</td>
-    <td class="lbl2 ko">${esc(b?.label_ko||'')}</td><td class="ko">${esc(b?.val_ko||'')}</td>
-    <td class="lbl en" style="display:none">${esc(a?.label_en||'')}</td><td class="en" style="display:none">${esc(a?.val_en||'')}</td>
-    <td class="lbl2 en" style="display:none">${esc(b?.label_en||'')}</td><td class="en" style="display:none">${esc(b?.val_en||'')}</td>
-  </tr>`).join('');
+// 오늘 날짜 (KST 기준 자정)
+function getTodayKST() {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return new Date(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate());
 }
 
-let spaces=[];
-async function renderSpaces(){
-  const{data}=await SB.from('anam_spaces').select('*').order('sort_order');
-  if(!data||!data.length)return;
-  spaces=data;
-  document.getElementById('space-tabs').innerHTML=data.map((s,i)=>`
-    <button class="space-tab${i===0?' active':''}" onclick="setSpace(${i})">
-      <span class="ko">${esc(s.name_ko)}</span><span class="en">${esc(s.name_en)}</span>
-    </button>`).join('');
-  showSpace(0);
-}
-function setSpace(i){document.querySelectorAll('.space-tab').forEach((t,j)=>t.classList.toggle('active',i===j));showSpace(i);}
-function showSpace(i){
-  const s=spaces[i];if(!s)return;
-  const tagsKo=(s.tags_ko||'').split(',').filter(Boolean).map(t=>`<span class="space-tag">${esc(t.trim())}</span>`).join('');
-  const tagsEn=(s.tags_en||'').split(',').filter(Boolean).map(t=>`<span class="space-tag">${esc(t.trim())}</span>`).join('');
-  document.getElementById('space-content').innerHTML=`
-    <div>${s.img?`<img src="${driveUrl(s.img)}" class="space-img" alt="">`:`<div class="space-ph"><span class="ko">사진 준비 중</span><span class="en">Photo coming soon</span></div>`}</div>
-    <div>
-      <div class="space-name"><span class="ko">${esc(s.name_ko)}</span><span class="en">${esc(s.name_en)}</span></div>
-      <div class="space-desc ko">${esc(s.desc_ko)}</div>
-      <div class="space-desc en">${esc(s.desc_en)}</div>
-      <div class="space-tags ko">${tagsKo}</div>
-      <div class="space-tags en">${tagsEn}</div>
-    </div>`;
-  setLang(LANG);
+// 투어가능일 문자열("2026.07.01")을 Date 객체로 변환
+function parseTourDate(str) {
+  if (!str) return null;
+  const m = str.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+  if (!m) return null;
+  return new Date(parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]));
 }
 
-const slideIdx={};
-async function renderRooms(){
-  const{data}=await SB.from('anam_rooms').select('*').order('sort_order');
-  if(!data)return;
-  document.getElementById('rooms-grid').innerHTML=data.map((r,ri)=>`
-    <div class="room-card">
-      <div class="room-slide-wrap">
-        ${r.img1||r.img2
-          ?[r.img1,r.img2].filter(Boolean).map((img,ii)=>`<img class="room-slide-img${ii===0?' active':''}" src="${driveUrl(img)}" alt="">`).join('')
-          :`<div class="room-ph"><span class="ko">사진 준비 중</span><span class="en">Photo coming soon</span></div>`}
-        ${r.img1&&r.img2?`<button class="slide-btn prev" onclick="slideRoom(${ri},-1)">‹</button><button class="slide-btn next" onclick="slideRoom(${ri},1)">›</button>`:''}
-        <div class="room-badges">
-          ${r.badge_tour?`<span class="badge-pill badge-tour"><span class="ko">투어 가능</span><span class="en">Tour Available</span></span>`:''}
-          ${r.badge_contract?`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Available</span></span>`:''}
-        </div>
-      </div>
-      <div class="room-body">
-        <div class="room-type ko">${esc(r.type_ko)}</div><div class="room-type en">${esc(r.type_en)}</div>
-        <div class="room-name ko">${esc(r.name_ko)}</div><div class="room-name en">${esc(r.name_en)}</div>
-        <div class="room-price ko">${esc(r.rent_ko)}</div><div class="room-price en">${esc(r.rent_en)}</div>
-        <div class="room-deposit ko">${esc(r.deposit_ko)}</div><div class="room-deposit en">${esc(r.deposit_en)}</div>
-        <hr class="room-hr">
-        <div class="room-detail"><span class="room-detail-lbl ko">관리비</span><span class="room-detail-lbl en">Maintenance</span><span class="ko">${esc(r.mgmt_ko)}</span><span class="en">${esc(r.mgmt_en)}</span></div>
-        <div class="room-detail"><span class="room-detail-lbl ko">청소비</span><span class="room-detail-lbl en">Cleaning</span><span class="ko">${esc(r.clean_ko)}</span><span class="en">${esc(r.clean_en)}</span></div>
-      </div>
-    </div>`).join('');
-  setLang(LANG);
-}
-function slideRoom(ri,dir){
-  const wrap=document.querySelectorAll('.room-slide-wrap')[ri];
-  const imgs=wrap.querySelectorAll('.room-slide-img');
-  if(imgs.length<2)return;
-  const cur=slideIdx[ri]||0;
-  const next=(cur+dir+imgs.length)%imgs.length;
-  imgs.forEach((el,i)=>el.classList.toggle('active',i===next));
-  slideIdx[ri]=next;
+// 공실 상태 판별: 'vacant'(즉시입주), 'upcoming'(공실예정), null(입주중)
+function getVacancyStatus(isVacant, tourStr) {
+  if (!isVacant) return null;
+  const tourDate = parseTourDate(tourStr);
+  const today = getTodayKST();
+  if (!tourDate) return 'vacant';           // 투어가능일 없으면 즉시 공실
+  if (tourDate > today) return 'upcoming';  // 투어가능일이 미래 → 공실예정
+  return 'vacant';                          // 투어가능일이 오늘 이하 → 공실(투어가능일 숨김)
 }
 
-setLang(LANG);
-renderPopup();renderYT();renderInfo();renderSpaces();renderRooms();
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('hdr-sub').textContent = lang === 'ko' ? 'Studio 안암 공실안내' : 'Studio Anam — Vacancy Guide';
+  document.querySelectorAll('[data-ko]').forEach(el => { el.textContent = lang === 'ko' ? el.dataset.ko : el.dataset.en; });
+  document.querySelectorAll('.tab-item[data-ko]').forEach(el => { el.textContent = lang === 'ko' ? el.dataset.ko : el.dataset.en; });
+  const activeTab = document.querySelector('.tab-item.active');
+  if (activeTab) {
+    const name = activeTab.dataset.tab;
+    if (name === 'info') {
+      const body = document.getElementById('info-body');
+      body.style.display = 'none';
+      document.getElementById('info-loader').style.display = 'flex';
+      loaded['info'] = false;
+      fetchTab('info');
+      setTimeout(function() { if (!loaded['vacancy']) { loaded['vacancy'] = true; fetchTab('vacancy'); } }, 300);
+    } else if (name === 'vacancy' && loaded['vacancy']) {
+      renderTab('vacancy', cachedData['vacancy']);
+    } else if (name === 'photo' && loaded['photo']) {
+      renderTab('photo', cachedData['photo']);
+    }
+  }
+}
+
+const loaded = { vacancy: false, info: false, photo: false };
+const cachedData = {};
+
+google.script.run.withSuccessHandler(function(links) {
+  document.getElementById('btn-homepage').href = links.homepage;
+  document.getElementById('btn-youtube').href  = links.youtube;
+}).getLinks();
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-item').forEach(el => el.classList.toggle('active', el.dataset.tab === name));
+  document.querySelectorAll('.tab-content').forEach(el => { el.classList.toggle('active', el.id === 'tab-' + name); });
+  if (!loaded[name]) { loaded[name] = true; fetchTab(name); }
+}
+
+function fetchTab(name) {
+  const fnMap = { vacancy:'getVacancyData', info: currentLang === 'en' ? 'getInfoDataEn' : 'getInfoData', photo:'getPhotoData' };
+  google.script.run
+    .withSuccessHandler(data => { cachedData[name] = data; renderTab(name, data); })
+    .withFailureHandler(err => showError(name, err))
+    [fnMap[name]]();
+}
+
+function showError(name, err) {
+  document.getElementById(name + '-loader').style.display = 'none';
+  document.getElementById(name + '-body').style.display = 'block';
+  document.getElementById(name + '-body').innerHTML = '<div style="padding:40px;color:#e74c3c;font-size:13px;">' + t('errPrefix') + err + '</div>';
+}
+
+fetchTab('info');
+
+function renderTab(name, data) {
+  document.getElementById(name + '-loader').style.display = 'none';
+  const body = document.getElementById(name + '-body');
+  body.style.display = 'block';
+  if (name === 'vacancy') body.innerHTML = buildVacancy(data);
+  else if (name === 'info') body.innerHTML = buildInfo(data);
+  else if (name === 'photo') body.innerHTML = buildPhoto(data);
+}
+
+function formatDate(val) {
+  if (!val) return '';
+  const str = String(val).trim();
+  if (str === '') return '';
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+    return kst.getFullYear() + '.' + String(kst.getMonth() + 1).padStart(2, '0') + '.' + String(kst.getDate()).padStart(2, '0');
+  }
+  return str;
+}
+function hasValue(val) {
+  if (val === null || val === undefined || val === '') return false;
+  if (typeof val === 'number') return val > 0;
+  const str = String(val).trim();
+  return str !== '' && str !== '0';
+}
+function formatKRW(val) {
+  if (!hasValue(val)) return '';
+  if (typeof val === 'number' && val > 0) {
+    const formatted = val.toLocaleString();
+    return currentLang === 'en' ? formatted + ' KRW' : formatted + '원';
+  }
+  const str = String(val).trim();
+  if (str === '0' || str === '') return '';
+  const manMatch = str.match(/^([\d,.]+)만원$/);
+  if (manMatch) {
+    const num = Math.round(parseFloat(manMatch[1].replace(/,/g, '')) * 10000);
+    const formatted = num.toLocaleString();
+    return currentLang === 'en' ? formatted + ' KRW' : formatted + '원';
+  }
+  const wonMatch = str.match(/^([\d,]+)원$/);
+  if (wonMatch) { return currentLang === 'en' ? wonMatch[1] + ' KRW' : str; }
+  return str;
+}
+
+function buildVacancy(data) {
+  const rows = data.rows;
+  const floorBlocks = parseFloorBlocks(rows);
+  let vacantCount = 0, upcomingCount = 0, totalRooms = 0;
+  floorBlocks.forEach(block => {
+    block.rooms.forEach(r => {
+      totalRooms++;
+      const status = getVacancyStatus(r.isVacant, r.tour);
+      if (status === 'vacant') vacantCount++;
+      else if (status === 'upcoming') upcomingCount++;
+    });
+  });
+
+  let html = '<div class="vacancy-meta"><div class="vacancy-count">' + t('totalLabel') + ' <strong>' + totalRooms + '</strong> ' + t('units');
+  if (vacantCount > 0) html += ' · <span style="color:#ef4444;font-weight:700">' + t('vacant') + ' ' + vacantCount + '</span> ' + t('units');
+  if (upcomingCount > 0) html += ' · <span style="color:#22c55e;font-weight:700">' + t('upcoming') + ' ' + upcomingCount + '</span> ' + t('units');
+  html += '</div><div class="update-time">' + data.updatedAt + ' ' + t('cache') + '</div></div>';
+
+  floorBlocks.forEach(function(block) {
+    html += '<div class="floor-section"><div class="floor-label">' + block.floor + 'F</div><div class="room-grid">';
+    block.rooms.forEach(function(room) {
+      const status = getVacancyStatus(room.isVacant, room.tour); // 'vacant' | 'upcoming' | null
+      const cardClass = status ? ' ' + status : '';
+      html += '<div class="room-card' + cardClass + '">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
+      html += '<div class="room-no">' + room.no + (currentLang === 'ko' ? '호' : '') + '</div>';
+      if (status === 'vacant')   html += '<span class="badge vacant" style="font-size:10px;padding:2px 8px">' + t('vacant') + '</span>';
+      if (status === 'upcoming') html += '<span class="badge upcoming" style="font-size:10px;padding:2px 8px">' + t('upcoming') + '</span>';
+      html += '</div><div class="room-type">' + translateType(room.type || '—') + '</div>';
+      if (status) {
+        html += '<div class="room-fee">';
+        if (room.deposit) html += '<span>' + t('deposit') + ' ' + room.deposit + '</span>';
+        if (room.rent)    html += '<span>' + t('rent') + ' ' + room.rent + '</span>';
+        if (room.mgmt)    html += '<span>' + t('mgmt') + ' ' + room.mgmt + '</span>';
+        if (room.total)   html += '<span style="font-weight:700;color:var(--navy)">' + t('total') + ' ' + room.total + '</span>';
+        html += '</div>';
+        // 투어가능일: upcoming(미래)일 때만 표시
+        if (status === 'upcoming' && room.tour) {
+          html += '<div class="tour-date">' + t('tourDate') + ': ' + room.tour + '</div>';
+        }
+        if (room.memo) html += '<div class="tour-date" style="background:#fff3cd;color:#856404;">' + room.memo + '</div>';
+      } else {
+        html += '<div style="font-size:12px;color:var(--gray);margin-top:8px;">' + t('occupied') + '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  return html;
+}
+
+function parseFloorBlocks(rows) {
+  const blocks = [];
+  let i = 0;
+  while (i < rows.length) {
+    const row = rows[i];
+    const col0 = String(row[0] || '').trim();
+    const col1 = String(row[1] || '').trim();
+    if (/^\d+$/.test(col0) && /^\d{3}$/.test(col1)) {
+      const floor = parseInt(col0);
+      const roomNos = [];
+      for (let c = 1; c < row.length; c++) { const v = String(row[c] || '').trim(); if (/^\d{3}$/.test(v)) roomNos.push(v); }
+      const roomData = roomNos.map(function(no) { return { no:no,type:'',tour:'',deposit:'',rent:'',mgmt:'',total:'',memo:'',isVacant:false }; });
+      let j = i + 1;
+      while (j < rows.length) {
+        const r = rows[j];
+        const label = String(r[0] || '').trim();
+        if (!label && String(r[1] || '').trim() === '') { j++; break; }
+        if (label === '타입' || label === 'Type') { roomData.forEach(function(rd, idx) { rd.type = String(r[idx+1] || '').trim(); }); }
+        else if (label.indexOf('투어') !== -1 || label.toLowerCase().indexOf('tour') !== -1) { roomData.forEach(function(rd, idx) { rd.tour = formatDate(r[idx+1]); }); }
+        else if (label.indexOf('보증금') !== -1 || label.toLowerCase().indexOf('deposit') !== -1) { roomData.forEach(function(rd, idx) { rd.deposit = formatKRW(r[idx+1]); if (hasValue(r[idx+1])) rd.isVacant = true; }); }
+        else if ((label.indexOf('월세') !== -1 || label.toLowerCase().indexOf('rent') !== -1) && label.indexOf('합계') === -1) { roomData.forEach(function(rd, idx) { rd.rent = formatKRW(r[idx+1]); if (hasValue(r[idx+1])) rd.isVacant = true; }); }
+        else if (label.indexOf('관리비') !== -1 || label.indexOf('기본') !== -1 || label.toLowerCase().indexOf('mgmt') !== -1) { roomData.forEach(function(rd, idx) { rd.mgmt = formatKRW(r[idx+1]); }); }
+        else if (label.indexOf('합계') !== -1 || label.toLowerCase().indexOf('total') !== -1) { roomData.forEach(function(rd, idx) { rd.total = formatKRW(r[idx+1]); if (hasValue(r[idx+1])) rd.isVacant = true; }); }
+        else if (label.indexOf('비고') !== -1 || label.toLowerCase().indexOf('note') !== -1) { roomData.forEach(function(rd, idx) { rd.memo = String(r[idx+1] || '').trim(); }); }
+        const nextCol0 = String(r[0] || '').trim();
+        if (/^\d+$/.test(nextCol0) && /^\d{3}$/.test(String(r[1] || '').trim())) break;
+        j++;
+      }
+      blocks.push({ floor:floor, rooms:roomData });
+      i = j;
+    } else { i++; }
+  }
+  blocks.sort(function(a, b) { return b.floor - a.floor; });
+  return blocks;
+}
+
+function buildInfo(data) {
+  const rows = data.rows;
+  const tableRows = [];
+  const docItems = [];
+  let headerDone = false;
+  let inDocSection = false;
+  rows.forEach(function(row) {
+    const col0 = String(row[0] || '').trim();
+    const col1 = String(row[1] || '').trim();
+    if (!col0 && !col1) { inDocSection = false; return; }
+    if (!headerDone && (col0 === '구분' || col0 === 'Category' || col0.indexOf('기본정보') !== -1)) { headerDone = true; return; }
+    if (col0.indexOf('필요서류') !== -1 || col0.indexOf('필요 서류') !== -1 || col0.toLowerCase().indexOf('required documents') !== -1 || col0.toLowerCase().indexOf('documents required') !== -1) {
+      inDocSection = true; if (col1) parseDocLine(col1, docItems); return;
+    }
+    if (inDocSection && col0 === '' && col1) { parseDocLine(col1, docItems); return; }
+    inDocSection = false;
+    if (col0 && col1) tableRows.push([col0, col1.replace(/\n/g, '<br>')]);
+  });
+  let html = '<div class="section-title">' + t('infoTitle') + '</div><table class="info-table"><tbody>';
+  tableRows.forEach(function(row) { html += '<tr><th>' + row[0] + '</th><td>' + row[1] + '</td></tr>'; });
+  html += '</tbody></table>';
+  if (docItems.length > 0) {
+    html += '<div class="doc-list"><div class="section-title" style="margin-top:28px">' + t('docTitle') + '</div>';
+    docItems.forEach(function(item, idx) {
+      const id = 'doc-acc-' + idx;
+      const formatted = item.content.replace(/\s*([①②③④⑤])/g, '<br>$1').replace(/^<br>/, '');
+      html += '<div class="doc-accordion" id="' + id + '"><div class="doc-accordion-header" onclick="toggleDoc(\'' + id + '\')"><span>' + item.label + '</span><span class="doc-accordion-arrow">▼</span></div><div class="doc-accordion-body">' + (formatted || '—') + '</div></div>';
+    });
+    html += '</div>';
+  }
+  return html;
+}
+function parseDocLine(line, docItems) {
+  line = line.trim(); if (!line) return;
+  const colonIdx = line.indexOf(':');
+  const label = colonIdx >= 0 ? line.substring(0, colonIdx).trim() : line;
+  const content = colonIdx >= 0 ? line.substring(colonIdx + 1).trim() : '';
+  if (label) docItems.push({ label:label, content:content });
+}
+function toggleDoc(id) { document.getElementById(id).classList.toggle('open'); }
+
+function buildPhoto(data) {
+  const rows = data.rows;
+  const types = [];
+  let hasCommon = false;
+  rows.forEach(function(row) {
+    const col0 = String(row[0] || '').trim();
+    const col1 = String(row[1] || '').trim();
+    const col2 = String(row[2] || '').trim();
+    const col3 = String(row[3] || '').trim();
+    const col4 = String(row[4] || '').trim();
+    if (!col0 && !col1) return;
+    if (col0 === '공용 공간' || col0.toLowerCase() === 'common areas') { hasCommon = true; return; }
+    if (col0) {
+      let deposit = '', rent = '', mgmt = '';
+      if (currentLang === 'en') {
+        const dm = col2.match(/Deposit[^:]*:\s*KRW\s*([\d,]+)/i);
+        const rm = col2.match(/Monthly Rent[^:]*:\s*KRW\s*([\d,]+)/i);
+        const um = col2.match(/(?:Utilities|Management Fee)[^:]*:\s*KRW\s*([\d,]+)/i);
+        deposit = dm ? dm[1] + ' KRW' : ''; rent = rm ? rm[1] + ' KRW' : ''; mgmt = um ? um[1] + ' KRW' : '';
+      } else {
+        function parseKRWText(s) { if (!s) return ''; s = s.trim(); const m = s.match(/^([\d.]+)만원$/); if (m) return Math.round(parseFloat(m[1]) * 10000).toLocaleString() + '원'; return s; }
+        const bm = col1.match(/보증금\s*:\s*([^/]+)/); const im = col1.match(/임대료\s*:\s*([^/]+)/); const gm = col1.match(/관리비\s*:\s*([^/]+)/);
+        deposit = bm ? parseKRWText(bm[1]) : ''; rent = im ? parseKRWText(im[1]) : ''; mgmt = gm ? parseKRWText(gm[1]) : '';
+      }
+      const furniture = currentLang === 'en' ? (col4 || col3) : col3;
+      types.push({ name:col0, deposit, rent, mgmt, furniture });
+    }
+  });
+  let html = '<div style="margin-bottom:32px;padding:36px 24px;background:var(--cream);border-radius:16px;text-align:center;"><div style="font-size:13px;color:var(--gray);margin-bottom:12px;">' + t('photoNote') + '</div><a href="https://www.homes.global/ko/branches/anam" target="_blank" style="display:inline-block;padding:14px 28px;background:var(--navy);color:#fff;font-weight:700;font-size:15px;border-radius:12px;text-decoration:none;transition:opacity .15s;" onmouseover="this.style.opacity=.8" onmouseout="this.style.opacity=1">' + t('photoLink') + '</a></div>';
+  if (hasCommon) {
+    html += '<div class="space-note"><h3>' + t('commonSpace') + '</h3><div class="space-list">';
+    t('spaces').forEach(function(s) { html += '<span class="space-tag">' + s + '</span>'; });
+    html += '</div></div>';
+  }
+  html += '<div class="section-title">' + t('typeGuide') + '</div><div class="type-grid">';
+  types.forEach(function(tp) {
+    const displayName = translateType(tp.name);
+    html += '<div class="type-card"><div class="type-info" style="padding:20px"><div class="type-name">' + displayName + '</div>';
+    if (tp.furniture) html += '<div style="font-size:11px;color:var(--gray);margin-bottom:8px;margin-top:4px">' + t('includes') + ': ' + tp.furniture + '</div>';
+    html += '<div class="type-price">';
+    if (tp.deposit) html += '<div class="price-row"><span class="price-label">' + t('deposit') + '</span><span>' + tp.deposit + '</span></div>';
+    if (tp.rent)    html += '<div class="price-row"><span class="price-label">' + t('rent') + '</span><span style="font-weight:700">' + tp.rent + '</span></div>';
+    if (tp.mgmt) {
+      const mgmtLabel = currentLang === 'en' ? 'Utilities<br><span style="font-weight:400;font-size:10px;color:var(--gray)">(water, electricity, gas, internet incl.)</span>' : t('mgmt');
+      html += '<div class="price-row" style="align-items:flex-start"><span class="price-label" style="line-height:1.4">' + mgmtLabel + '</span><span style="padding-top:2px">' + tp.mgmt + '</span></div>';
+    }
+    html += '</div></div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function slidePhoto(id, dir) {
+  const el = document.getElementById(id); const slides = el.querySelectorAll('.slide'); const dots = el.querySelectorAll('.dot');
+  let idx = parseInt(el.dataset.idx); slides[idx].classList.remove('active'); if (dots[idx]) dots[idx].classList.remove('active');
+  idx = (idx + dir + slides.length) % slides.length; slides[idx].classList.add('active'); if (dots[idx]) dots[idx].classList.add('active'); el.dataset.idx = idx;
+}
+function goSlide(id, idx) {
+  const el = document.getElementById(id); const slides = el.querySelectorAll('.slide'); const dots = el.querySelectorAll('.dot');
+  const cur = parseInt(el.dataset.idx); slides[cur].classList.remove('active'); if (dots[cur]) dots[cur].classList.remove('active');
+  slides[idx].classList.add('active'); if (dots[idx]) dots[idx].classList.add('active'); el.dataset.idx = idx;
+}
 </script>
 </body>
 </html>

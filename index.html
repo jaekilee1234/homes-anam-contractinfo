@@ -30,10 +30,10 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 /* POPUP */
 .popup-overlay{position:fixed;inset:0;background:rgba(2,4,37,.5);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;}
 .popup-overlay.open{opacity:1;pointer-events:auto;}
-.popup-box{background:#fff;border-radius:20px;overflow:hidden;width:min(460px,92vw);box-shadow:0 24px 64px rgba(2,4,37,.22);}
+.popup-box{background:#fff;border-radius:20px;overflow:hidden;width:min(400px,88vw);max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(2,4,37,.22);}
 .popup-slide{display:none;}.popup-slide.active{display:block;}
-.popup-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-.popup-ph{width:100%;aspect-ratio:4/3;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:14px;font-weight:600;}
+.popup-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;}
+.popup-ph{width:100%;aspect-ratio:3/4;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:14px;font-weight:600;}
 .popup-dots{display:flex;justify-content:center;gap:6px;padding:12px 0 4px;}
 .popup-dot{width:6px;height:6px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:.15s;}
 .popup-dot.active{background:var(--navy);width:18px;border-radius:3px;}
@@ -206,7 +206,6 @@ let popIdx=0;
 
 function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
 
-// 구글 드라이브 URL → lh3 직접 임베드 변환 (uc?export=view 방식 대체)
 function driveUrl(url){
   if(!url)return'';
   if(url.includes('lh3.googleusercontent.com'))return url;

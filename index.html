@@ -67,26 +67,28 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .info-tbl td{padding:12px 16px;font-size:13.5px;line-height:1.55;vertical-align:middle;color:var(--ink);}
 /* 라벨 열 (1·3번째): 18% 너비, 배경·볼드 */
 .info-tbl td.lbl{
-  width:18%;font-size:12px;font-weight:700;letter-spacing:.01em;
-  background:var(--soft);color:#555;
+  width:18%;font-size:11.5px;font-weight:700;letter-spacing:.03em;
+  background:#e8e8e8;color:#444;
   border-right:1px solid var(--line);
   white-space:nowrap;
 }
-/* 값 열 (2번째): 왼쪽 절반 나머지 */
+/* 값 열 (2번째) */
 .info-tbl td.val{
   width:32%;font-size:13.5px;font-weight:500;color:var(--ink);
+  background:#fff;
   border-right:1px solid var(--line);
 }
-/* 라벨2 열 (3번째): 1번 라벨과 동일 */
+/* 라벨2 열 (3번째) */
 .info-tbl td.lbl2{
-  width:18%;font-size:12px;font-weight:700;letter-spacing:.01em;
-  background:var(--soft);color:#555;
+  width:18%;font-size:11.5px;font-weight:700;letter-spacing:.03em;
+  background:#e8e8e8;color:#444;
   border-right:1px solid var(--line);
   white-space:nowrap;
 }
-/* 값2 열 (4번째): 나머지 */
+/* 값2 열 (4번째) */
 .info-tbl td.val2{
   font-size:13.5px;font-weight:500;color:var(--ink);
+  background:#fff;
 }
 /* SPACES */
 .space-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:32px;}
@@ -329,13 +331,19 @@ async function renderInfo(){
   if(!data)return;
   const rows=JSON.parse(data.value||'[]');
   const pairs=[];for(let i=0;i<rows.length;i+=2)pairs.push([rows[i],rows[i+1]||null]);
-  // 한국어 tbody / 영어 tbody 를 각각 생성해 lang 전환으로 토글
-  const makeRows=(lang)=>pairs.map(([a,b])=>`<tr>
-    <td class="lbl">${esc(a?.[`label_${lang}`]||'')}</td>
-    <td class="val">${esc(a?.[`val_${lang}`]||'')}</td>
-    <td class="lbl2">${esc(b?.[`label_${lang}`]||'')}</td>
-    <td class="val2">${esc(b?.[`val_${lang}`]||'')}</td>
-  </tr>`).join('');
+  const makeRows=(lang)=>pairs
+    .filter(([a,b])=>{
+      // 좌측 또는 우측 중 하나라도 라벨·값이 있으면 표시
+      const aHas=(a?.[`label_${lang}`]||'').trim()||(a?.[`val_${lang}`]||'').trim();
+      const bHas=(b?.[`label_${lang}`]||'').trim()||(b?.[`val_${lang}`]||'').trim();
+      return aHas||bHas;
+    })
+    .map(([a,b])=>`<tr>
+      <td class="lbl">${esc(a?.[`label_${lang}`]||'')}</td>
+      <td class="val">${esc(a?.[`val_${lang}`]||'')}</td>
+      <td class="lbl2">${esc(b?.[`label_${lang}`]||'')}</td>
+      <td class="val2">${esc(b?.[`val_${lang}`]||'')}</td>
+    </tr>`).join('');
   document.getElementById('info-tbl-ko').innerHTML=makeRows('ko');
   document.getElementById('info-tbl-en').innerHTML=makeRows('en');
 }

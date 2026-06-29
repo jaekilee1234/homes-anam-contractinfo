@@ -105,7 +105,10 @@ textarea{min-height:72px;}
       <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveInfo()">저장</button></div>
     </div>
     <div class="card">
-      <div class="card-title">공용공간</div>
+      <div class="card-title">
+        공용공간
+        <button class="btn btn-outline btn-sm" onclick="addSpace()">+ 추가</button>
+      </div>
       <div id="spaces-list"></div>
     </div>
     <div class="card">
@@ -188,23 +191,96 @@ async function saveInfo(){await SB.from('anam_settings').upsert({key:'info',valu
 
 /* ── SPACES ── */
 async function loadSpaces(){const{data}=await SB.from('anam_spaces').select('*').order('sort_order');spacesData=data||[];renderSpaces();}
+
 function renderSpaces(){
   document.getElementById('spaces-list').innerHTML=spacesData.map((s,i)=>`
     <div class="acc-item">
       <div class="acc-head" onclick="tog('sp',${i})">
         <div class="acc-num">${i+1}</div>
-        <div class="acc-info"><div class="acc-name">${esc(s.name_ko)}</div><div class="acc-sub">${esc(s.name_en)}</div></div>
+        <div class="acc-info">
+          <div class="acc-name">${esc(s.name_ko)||'<span style="color:var(--muted);font-weight:400;">이름 없음</span>'}</div>
+          <div class="acc-sub">${esc(s.name_en)||'—'}</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-right:8px;">
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();moveSpace(${i},-1)">↑</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();moveSpace(${i},1)">↓</button>
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteSpace(${s.id},${i})">삭제</button>
+        </div>
         <svg class="chv${openAcc.sp===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="acc-body${openAcc.sp===i?' open':''}">
-        <div class="fr"><div class="fg"><label>이름 (한국어)</label><input type="text" value="${esc(s.name_ko)}" onchange="spacesData[${i}].name_ko=this.value"></div><div class="fg"><label>Name (EN)</label><input type="text" value="${esc(s.name_en)}" onchange="spacesData[${i}].name_en=this.value"></div></div>
-        <div class="fr"><div class="fg"><label>설명 (한국어)</label><textarea onchange="spacesData[${i}].desc_ko=this.value">${esc(s.desc_ko)}</textarea></div><div class="fg"><label>Description (EN)</label><textarea onchange="spacesData[${i}].desc_en=this.value">${esc(s.desc_en)}</textarea></div></div>
-        <div class="fr"><div class="fg"><label>태그 한국어 (쉼표 구분)</label><input type="text" value="${esc(s.tags_ko)}" onchange="spacesData[${i}].tags_ko=this.value"></div><div class="fg"><label>Tags EN (comma)</label><input type="text" value="${esc(s.tags_en)}" onchange="spacesData[${i}].tags_en=this.value"></div></div>
+        <div class="fr">
+          <div class="fg"><label>이름 (한국어)</label><input type="text" value="${esc(s.name_ko)}" onchange="spacesData[${i}].name_ko=this.value"></div>
+          <div class="fg"><label>Name (EN)</label><input type="text" value="${esc(s.name_en)}" onchange="spacesData[${i}].name_en=this.value"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>설명 (한국어)</label><textarea onchange="spacesData[${i}].desc_ko=this.value">${esc(s.desc_ko)}</textarea></div>
+          <div class="fg"><label>Description (EN)</label><textarea onchange="spacesData[${i}].desc_en=this.value">${esc(s.desc_en)}</textarea></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>태그 한국어 (쉼표 구분)</label><input type="text" value="${esc(s.tags_ko)}" onchange="spacesData[${i}].tags_ko=this.value"></div>
+          <div class="fg"><label>Tags EN (comma)</label><input type="text" value="${esc(s.tags_en)}" onchange="spacesData[${i}].tags_en=this.value"></div>
+        </div>
         <div class="fg"><label>사진 URL (Google Drive)</label><input type="url" value="${esc(s.img)}" onchange="spacesData[${i}].img=this.value"></div>
-        <div style="margin-top:12px;display:flex;justify-content:flex-end;"><button class="btn btn-gold btn-sm" onclick="saveSpace(${i})">저장</button></div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+          <button class="btn btn-gold btn-sm" onclick="saveSpace(${i})">저장</button>
+        </div>
       </div>
     </div>`).join('');}
-async function saveSpace(i){const s=spacesData[i];const{error}=await SB.from('anam_spaces').update({name_ko:s.name_ko,name_en:s.name_en,desc_ko:s.desc_ko,desc_en:s.desc_en,tags_ko:s.tags_ko,tags_en:s.tags_en,img:s.img}).eq('id',s.id);if(error)toast('오류: '+error.message,'err');else toast('저장됨','ok');}
+
+async function addSpace(){
+  const newSort=spacesData.length>0?Math.max(...spacesData.map(s=>s.sort_order||0))+1:0;
+  const{data,error}=await SB.from('anam_spaces').insert({
+    sort_order:newSort,
+    name_ko:'새 공간',
+    name_en:'New Space',
+    desc_ko:'',
+    desc_en:'',
+    tags_ko:'',
+    tags_en:'',
+    img:''
+  }).select().single();
+  if(error){toast('오류: '+error.message,'err');return;}
+  spacesData.push(data);
+  openAcc.sp=spacesData.length-1;
+  renderSpaces();
+  toast('공간이 추가됐어요. 내용을 입력하고 저장하세요.','ok');
+}
+
+async function deleteSpace(id,i){
+  if(!confirm(`"${spacesData[i].name_ko}" 공간을 삭제할까요?`))return;
+  const{error}=await SB.from('anam_spaces').delete().eq('id',id);
+  if(error){toast('오류: '+error.message,'err');return;}
+  spacesData.splice(i,1);
+  if(openAcc.sp===i)openAcc.sp=null;
+  else if(openAcc.sp>i)openAcc.sp--;
+  renderSpaces();
+  toast('삭제됨');
+}
+
+async function moveSpace(i,dir){
+  const n=i+dir;
+  if(n<0||n>=spacesData.length)return;
+  [spacesData[i].sort_order,spacesData[n].sort_order]=[spacesData[n].sort_order,spacesData[i].sort_order];
+  await SB.from('anam_spaces').update({sort_order:spacesData[i].sort_order}).eq('id',spacesData[i].id);
+  await SB.from('anam_spaces').update({sort_order:spacesData[n].sort_order}).eq('id',spacesData[n].id);
+  [spacesData[i],spacesData[n]]=[spacesData[n],spacesData[i]];
+  if(openAcc.sp===i)openAcc.sp=n;
+  else if(openAcc.sp===n)openAcc.sp=i;
+  renderSpaces();
+}
+
+async function saveSpace(i){
+  const s=spacesData[i];
+  const{error}=await SB.from('anam_spaces').update({
+    name_ko:s.name_ko,name_en:s.name_en,
+    desc_ko:s.desc_ko,desc_en:s.desc_en,
+    tags_ko:s.tags_ko,tags_en:s.tags_en,
+    img:s.img
+  }).eq('id',s.id);
+  if(error)toast('오류: '+error.message,'err');
+  else{openAcc.sp=i;renderSpaces();toast('저장됨','ok');}
+}
 
 /* ── ROOMS ── */
 async function loadRooms(){const{data}=await SB.from('anam_rooms').select('*').order('sort_order');roomsData=data||[];renderRooms();}

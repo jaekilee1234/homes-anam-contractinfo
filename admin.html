@@ -58,9 +58,10 @@ textarea{min-height:72px;}
 .chv{transition:transform .2s;color:var(--muted);}
 .chv.open{transform:rotate(180deg);}
 .badge-row{display:flex;gap:10px;flex-wrap:wrap;}
-.btog{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);cursor:pointer;font-size:13px;font-weight:700;background:#fff;transition:.15s;user-select:none;}
-.btog.on-tour{background:var(--navy);color:#fff;border-color:var(--navy);}
-.btog.on-contract{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+.btog{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--line);cursor:pointer;font-size:13px;font-weight:700;background:#fff;transition:.15s;user-select:none;color:var(--muted);}
+.btog.on-tour{background:#22863a;color:#fff;border-color:#22863a;}
+.btog.on-contract{background:#1a56db;color:#fff;border-color:#1a56db;}
+.btog.on-novacancy{background:#e53e3e;color:#fff;border-color:#e53e3e;}
 .pi{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--soft);border-radius:10px;margin-bottom:8px;}
 .pi-body{flex:1;}
 #toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(6px);transition:.22s;z-index:999;pointer-events:none;}
@@ -288,19 +289,21 @@ function renderRooms(){
   document.getElementById('rooms-list').innerHTML=roomsData.map((r,i)=>`
     <div class="acc-item">
       <div class="acc-head" onclick="tog('rm',${i})">
-        <div class="acc-num" style="background:${r.badge_contract?'var(--gold)':'var(--line)'};color:${r.badge_contract?'var(--navy)':'var(--muted)'};">${i+1}</div>
+        <div class="acc-num" style="background:${r.badge_no_vacancy?'#e53e3e':r.badge_contract?'#1a56db':r.badge_tour?'#22863a':'var(--line)'};color:${(r.badge_no_vacancy||r.badge_contract||r.badge_tour)?'#fff':'var(--muted)'};">${i+1}</div>
         <div class="acc-info"><div class="acc-name">${esc(r.name_ko)}</div><div class="acc-sub">${esc(r.type_en)}</div></div>
         <div style="display:flex;gap:5px;margin-right:8px;">
-          ${r.badge_tour?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--navy);color:#fff;">투어가능</span>':''}
-          ${r.badge_contract?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--gold);color:var(--navy);">계약가능</span>':''}
+          ${r.badge_tour?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#22863a;color:#fff;">투어 가능</span>':''}
+          ${r.badge_contract?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#1a56db;color:#fff;">계약 가능</span>':''}
+          ${r.badge_no_vacancy?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#e53e3e;color:#fff;">공실 없음</span>':''}
         </div>
         <svg class="chv${openAcc.rm===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="acc-body${openAcc.rm===i?' open':''}">
         <div style="margin-bottom:14px;"><label style="display:block;margin-bottom:8px;">배지 설정</label>
           <div class="badge-row">
-            <div class="btog${r.badge_tour?' on-tour':''}" onclick="roomsData[${i}].badge_tour=!roomsData[${i}].badge_tour;openAcc.rm=${i};renderRooms()">투어 가능</div>
-            <div class="btog${r.badge_contract?' on-contract':''}" onclick="roomsData[${i}].badge_contract=!roomsData[${i}].badge_contract;openAcc.rm=${i};renderRooms()">계약 가능</div>
+            <div class="btog${r.badge_tour?' on-tour':''}" onclick="roomsData[${i}].badge_tour=!roomsData[${i}].badge_tour;openAcc.rm=${i};renderRooms()">투어 가능 · Tour Available</div>
+            <div class="btog${r.badge_contract?' on-contract':''}" onclick="roomsData[${i}].badge_contract=!roomsData[${i}].badge_contract;openAcc.rm=${i};renderRooms()">계약 가능 · Contract Available</div>
+            <div class="btog${r.badge_no_vacancy?' on-novacancy':''}" onclick="roomsData[${i}].badge_no_vacancy=!roomsData[${i}].badge_no_vacancy;openAcc.rm=${i};renderRooms()">공실 없음 · No Vacancy</div>
           </div>
         </div>
         <div class="fr"><div class="fg"><label>임대료 (한국어)</label><input type="text" value="${esc(r.rent_ko)}" onchange="roomsData[${i}].rent_ko=this.value"></div><div class="fg"><label>Rent (EN)</label><input type="text" value="${esc(r.rent_en)}" onchange="roomsData[${i}].rent_en=this.value"></div></div>
@@ -308,7 +311,7 @@ function renderRooms(){
         <div style="margin-top:12px;display:flex;justify-content:flex-end;"><button class="btn btn-gold btn-sm" onclick="saveRoom(${i})">저장</button></div>
       </div>
     </div>`).join('');}
-async function saveRoom(i){const r=roomsData[i];const{error}=await SB.from('anam_rooms').update({badge_tour:r.badge_tour,badge_contract:r.badge_contract,rent_ko:r.rent_ko,rent_en:r.rent_en,img1:r.img1,img2:r.img2}).eq('id',r.id);if(error)toast('오류: '+error.message,'err');else toast('저장됨','ok');}
+async function saveRoom(i){const r=roomsData[i];const{error}=await SB.from('anam_rooms').update({badge_tour:r.badge_tour,badge_contract:r.badge_contract,badge_no_vacancy:r.badge_no_vacancy,rent_ko:r.rent_ko,rent_en:r.rent_en,img1:r.img1,img2:r.img2}).eq('id',r.id);if(error)toast('오류: '+error.message,'err');else toast('저장됨','ok');}
 
 /* ── STEPS ── */
 async function loadSteps(){const{data}=await SB.from('anam_steps').select('*').order('sort_order');stepsData=data||[];renderSteps();}

@@ -114,8 +114,9 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .slide-btn.prev{left:10px;}.slide-btn.next{right:10px;}
 .room-badges{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;z-index:3;}
 .badge-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
-.badge-tour{background:var(--navy);color:#fff;}
-.badge-contract{background:var(--gold);color:var(--navy);}
+.badge-tour{background:#22863a;color:#fff;}
+.badge-contract{background:#1a56db;color:#fff;}
+.badge-novacancy{background:#e53e3e;color:#fff;}
 .room-body{padding:18px 20px 22px;}
 .room-type{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
 .room-name{font-size:16px;font-weight:800;margin-bottom:14px;color:var(--ink);}
@@ -389,7 +390,8 @@ async function renderRooms(){
         ${r.img1&&r.img2?`<button class="slide-btn prev" onclick="slideRoom(${ri},-1)">‹</button><button class="slide-btn next" onclick="slideRoom(${ri},1)">›</button>`:''}
         <div class="room-badges">
           ${r.badge_tour?`<span class="badge-pill badge-tour"><span class="ko">투어 가능</span><span class="en">Tour Available</span></span>`:''}
-          ${r.badge_contract?`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Available</span></span>`:''}
+          ${r.badge_contract?`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Contract Available</span></span>`:''}
+          ${r.badge_no_vacancy?`<span class="badge-pill badge-novacancy"><span class="ko">공실 없음</span><span class="en">No Vacancy</span></span>`:''}
         </div>
       </div>
       <div class="room-body">

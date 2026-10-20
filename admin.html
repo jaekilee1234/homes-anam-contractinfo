@@ -170,6 +170,7 @@ textarea{min-height:72px;}
         <div class="fg"><label>Inquiry Label (EN)</label><input type="text" id="contact-label-en" placeholder="Inquiries"></div>
       </div>
       <div class="fg"><label>문의 받을 이메일</label><input type="text" id="contact-email" placeholder="jklee@homes.global"></div>
+      <div class="fg" style="margin-top:12px;"><label>문의 전화번호 (선택)</label><input type="text" id="contact-phone" placeholder="비워두면 표시되지 않습니다"></div>
       <div class="hint">홈 화면 하단 고정 문의 바와, 계약 절차·FAQ·계산기 페이지의 문의하기 버튼에 모두 반영됩니다.</div>
       <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveContact()">저장</button></div>
     </div>
@@ -510,12 +511,14 @@ async function loadContact(){
   document.getElementById('contact-label-ko').value=c.label_ko;
   document.getElementById('contact-label-en').value=c.label_en;
   document.getElementById('contact-email').value=c.email;
+  document.getElementById('contact-phone').value=c.phone||'';
 }
 async function saveContact(){
   const c={
     label_ko:document.getElementById('contact-label-ko').value,
     label_en:document.getElementById('contact-label-en').value,
-    email:document.getElementById('contact-email').value
+    email:document.getElementById('contact-email').value,
+    phone:document.getElementById('contact-phone').value
   };
   const{error}=await SB.from('anam_settings').upsert({key:'contact',value:JSON.stringify(c)});
   if(error)toast('오류: '+error.message,'err');else toast('연락처 저장됨','ok');

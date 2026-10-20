@@ -200,5 +200,76 @@ function toggleAcc(idx){
 
 setLang(LANG);loadData();loadContact();applyNavVisibility();
 </script>
+<!-- ct-modal: 문의하기 팝업 (메일 주소·복사·Gmail) -->
+<style>
+.ct-ov{position:fixed;inset:0;z-index:900;background:rgba(2,4,37,.55);display:none;align-items:center;justify-content:center;padding:16px;}
+.ct-ov.open{display:flex;}
+.ct-box{position:relative;background:#fff;border-radius:18px;width:min(400px,100%);padding:28px 24px 22px;box-shadow:0 24px 64px rgba(2,4,37,.3);font-family:inherit;color:#020425;text-align:center;}
+.ct-x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:20px;line-height:1;color:#888;cursor:pointer;padding:6px;}
+.ct-lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6F7A83;margin-bottom:10px;}
+.ct-mail{font-size:20px;font-weight:800;word-break:break-all;user-select:all;-webkit-user-select:all;margin-bottom:6px;}
+.ct-phone{display:none;margin:4px 0 2px;font-size:18px;font-weight:800;}
+.ct-phone a{color:#020425;text-decoration:none;border-bottom:2px solid #FFCF0D;}
+.ct-btns{display:flex;flex-direction:column;gap:8px;margin-top:18px;}
+.ct-btn{display:block;width:100%;box-sizing:border-box;padding:13px 16px;border-radius:12px;border:1px solid #E7DDC6;background:#fff;color:#020425;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit;}
+.ct-btn.pri{background:#FFCF0D;border-color:#FFCF0D;}
+.ct-btn:hover{filter:brightness(.97);}
+.ct-hint{margin-top:14px;font-size:11.5px;line-height:1.6;color:#888;}
+.ct-ov .ko,.ct-ov .en{display:none;}
+.lang-ko .ct-ov .ko,.lang-en .ct-ov .en{display:inline;}
+.lang-ko .ct-ov .ko.blk,.lang-en .ct-ov .en.blk{display:block;}
+</style>
+<div class="ct-ov" id="ct-ov" role="dialog" aria-modal="true">
+  <div class="ct-box">
+    <button class="ct-x" id="ct-x" aria-label="close">✕</button>
+    <div class="ct-lbl" id="ct-lbl"></div>
+    <div class="ct-mail" id="ct-mail"></div>
+    <div class="ct-phone" id="ct-phone"></div>
+    <div class="ct-btns">
+      <a class="ct-btn pri" id="ct-mailto" href="#"><span class="ko">메일 앱으로 열기</span><span class="en">Open in mail app</span></a>
+      <a class="ct-btn" id="ct-gmail" href="#" target="_blank" rel="noopener"><span class="ko">Gmail로 메일 쓰기</span><span class="en">Write in Gmail</span></a>
+      <button class="ct-btn" id="ct-copy" type="button"><span class="ko">메일 주소 복사</span><span class="en">Copy email address</span></button>
+    </div>
+    <div class="ct-hint"><span class="ko blk">메일 앱이 열리지 않으면 Gmail로 쓰거나, 주소를 복사해 사용하시는 메일에서 보내 주세요.</span><span class="en blk">If your mail app does not open, use Gmail or copy the address and write from your own email.</span></div>
+  </div>
+</div>
+<script>
+(function(){
+  var C={label_ko:'입주 문의',label_en:'Inquiries',email:'',phone:''},loaded=false,opts={};
+  function L(){return document.body.classList.contains('lang-en')?'en':'ko';}
+  function $(i){return document.getElementById(i);}
+  function pageEmail(){var a=$('contact-float')||document.querySelector('.contact-bar-mail');var h=a?(a.getAttribute('href')||''):'';var m=h.match(/^mailto:([^?]+)/i);return m?decodeURIComponent(m[1]):'';}
+  async function load(){
+    if(loaded)return;loaded=true;
+    try{if(typeof SB!=='undefined'){var r=await SB.from('anam_settings').select('value').eq('key','contact').maybeSingle();if(r&&r.data&&r.data.value)C=Object.assign(C,JSON.parse(r.data.value));}}catch(e){}
+    if(!C.email)C.email=pageEmail()||'jklee@homes.global';
+  }
+  function render(){
+    var q=[];if(opts.subject)q.push('subject='+encodeURIComponent(opts.subject));if(opts.body)q.push('body='+encodeURIComponent(opts.body));
+    var g=['view=cm','fs=1','to='+encodeURIComponent(C.email)];if(opts.subject)g.push('su='+encodeURIComponent(opts.subject));if(opts.body)g.push('body='+encodeURIComponent(opts.body));
+    $('ct-lbl').textContent=(L()==='en'?C.label_en:C.label_ko)||'';
+    $('ct-mail').textContent=C.email;
+    $('ct-mailto').href='mailto:'+C.email+(q.length?'?'+q.join('&'):'');
+    $('ct-gmail').href='https://mail.google.com/mail/?'+g.join('&');
+    var p=$('ct-phone');p.innerHTML='';
+    if(C.phone){var a=document.createElement('a');a.href='tel:'+String(C.phone).replace(/[^0-9+]/g,'');a.textContent=C.phone;p.appendChild(a);p.style.display='block';}else p.style.display='none';
+  }
+  async function open(o){opts=o||{};await load();render();$('ct-ov').classList.add('open');}
+  function close(){$('ct-ov').classList.remove('open');}
+  function copy(){
+    var t=C.email,btn=$('ct-copy'),orig=btn.innerHTML;
+    function ok(){btn.textContent=L()==='en'?'Copied ✓':'복사되었습니다 ✓';setTimeout(function(){btn.innerHTML=orig;},1800);}
+    function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('#contact-float,.contact-bar-mail,#calc-cta-link');
+    if(a){e.preventDefault();var o={};if(a.id==='calc-cta-link'){var h=a.getAttribute('href')||'';var qs=h.split('?')[1];if(qs){var P=new URLSearchParams(qs);o.subject=P.get('subject')||'';o.body=P.get('body')||'';}}open(o);return;}
+    if(e.target.id==='ct-ov'||e.target.id==='ct-x')close();
+    if(e.target.closest&&e.target.closest('#ct-copy'))copy();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script>
 </body>
 </html>

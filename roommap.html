@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공실현황 | HOMES Anam</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--occ:#C7CCD1;--up:#F2994A;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--soft);color:var(--ink);-webkit-font-smoothing:antialiased;}
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;}
+.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
+.nav-logo span{color:#1a1a1a;font-weight:700;}
+.nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
+.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
+.nav-link:hover,.nav-link.active{color:var(--ink);}
+.nav-link.active{font-weight:700;}
+.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
+.lang-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;}
+.lang-btn.active{background:var(--navy);color:#fff;}
+.hero{background:var(--navy);padding:52px 48px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.08em;margin-bottom:16px;}
+.hero h1{color:#fff;font-size:28px;font-weight:800;margin-bottom:10px;line-height:1.3;}
+.hero p{color:rgba(255,255,255,.6);font-size:14px;line-height:1.6;max-width:520px;margin:0 auto;}
+.main{max-width:960px;margin:0 auto;padding:36px 48px 100px;}
+
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px;}
+.stat-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 22px;flex:1;min-width:160px;}
+.stat-num{font-size:26px;font-weight:900;color:var(--navy);letter-spacing:-0.02em;}
+.stat-lbl{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-top:2px;}
+
+.type-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:30px;}
+.type-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 14px;}
+.type-card-code{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.type-card-name{font-size:13.5px;font-weight:800;margin-top:2px;margin-bottom:9px;}
+.type-badges{display:flex;flex-wrap:wrap;gap:5px;}
+.tbadge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.tbadge.contract{background:var(--gold);color:var(--navy);}
+.tbadge.tour{background:var(--navy);color:#fff;}
+.tbadge.none{background:var(--soft);color:var(--muted);border:1px solid var(--line);}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px;font-size:12px;color:var(--gray);align-items:center;}
+.legend-item{display:flex;align-items:center;gap:6px;}
+.legend-sw{width:13px;height:13px;border-radius:4px;}
+
+.floor-block{margin-bottom:22px;}
+.floor-title{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;}
+.room-row{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;}
+.room-cell{position:relative;aspect-ratio:1/1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:default;transition:transform .12s;}
+.room-cell.vacant{background:var(--gold);color:var(--navy);}
+.room-cell.occupied{background:var(--occ);color:#5b6268;}
+.room-cell.upcoming{background:var(--up);color:#fff;cursor:pointer;}
+.room-no{font-size:13px;font-weight:800;letter-spacing:-0.01em;}
+.room-type-lbl{font-size:8.5px;font-weight:700;opacity:.85;text-align:center;line-height:1.2;padding:0 2px;}
+.room-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:6px 10px;border-radius:7px;white-space:nowrap;z-index:5;opacity:0;pointer-events:none;transition:.15s;}
+.room-tip.show{opacity:1;}
+.room-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy);}
+
+.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(2,4,37,.18);transition:.15s;}
+.float-btn:hover{background:#0d1460;transform:translateY(-1px);}
+.ko,.en{display:none;}
+.lang-ko .ko{display:block;}
+.lang-en .en{display:block;}
+span.ko,span.en{display:none;}
+.lang-ko span.ko{display:inline;}
+.lang-en span.en{display:inline;}
+@media(max-width:900px){
+  .room-row{grid-template-columns:repeat(5,1fr);}
+  .type-cards{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:720px){
+  nav{padding:0 20px;grid-template-columns:auto 1fr auto;}
+  .nav-links{overflow-x:auto;justify-content:flex-start;gap:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-link{padding:7px 8px;font-size:11.5px;}
+  .main{padding:24px 20px 80px;}.hero{padding:36px 20px 32px;}
+}
+</style>
+</head>
+<body class="lang-ko">
+<nav>
+  <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
+    <a class="nav-link active" href="roommap.html"><span class="ko">공실현황</span><span class="en">Availability</span></a>
+    <a class="nav-link" id="navlink-calc" href="calc.html"><span class="ko">임대료 계산하기</span><span class="en">Rent Estimator</span></a>
+    <a class="nav-link" id="navlink-process" href="process.html"><span class="ko">계약 절차</span><span class="en">Process</span></a>
+    <a class="nav-link" id="navlink-info" href="info.html"><span class="ko">FAQ</span><span class="en">FAQ</span></a>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-badge"><span class="ko">실시간 공실현황</span><span class="en">Room Availability</span></div>
+  <h1><span class="ko">공실현황</span><span class="en">Room Availability</span></h1>
+  <p><span class="ko">층별·호실별 계약 가능 여부를 한눈에 확인하세요.</span><span class="en">Check contract availability by floor and room at a glance.</span></p>
+</div>
+<div class="main">
+  <div class="stat-row" id="stat-row"></div>
+  <div class="type-cards" id="type-cards"></div>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-sw" style="background:var(--gold);"></span><span class="ko">계약 가능</span><span class="en">Available</span></div>
+    <div class="legend-item"><span class="legend-sw" style="background:var(--occ);"></span><span class="ko">재실 중</span><span class="en">Occupied</span></div>
+    <div class="legend-item" id="legend-upcoming"><span class="legend-sw" style="background:var(--up);"></span><span class="ko">계약 가능 예정</span><span class="en">Upcoming</span></div>
+  </div>
+  <div id="floors"></div>
+</div>
+<a class="float-btn" id="contact-float" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
+
+<script>
+const SB=supabase.createClient(ANAM_CONFIG.url,ANAM_CONFIG.key);
+let LANG=localStorage.getItem('homes-lang')||'ko';
+function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ── fixed building layout: room number → room type id (matches anam_rooms.room_id) ── */
+const ROOM_TYPE_MAP={
+  301:'full',302:'full',303:'walkin',304:'full',305:'multi',306:'full',307:'full',308:'work',309:'full',310:'full',
+  401:'full',402:'full',403:'walkin',404:'full',405:'work',406:'full',407:'full',408:'walkin',409:'full',410:'full',
+  501:'work',502:'walkin',503:'walkin',504:'full',505:'work',506:'multi',507:'work',508:'walkin',509:'multi',510:'walkin',
+  601:'work',602:'walkin',603:'walkin',604:'full',605:'work',606:'multi',607:'work',608:'walkin',609:'multi',610:'walkin',
+  701:'work',702:'walkin',703:'walkin',704:'full',705:'work',706:'multi',707:'work',708:'walkin',709:'walkin',710:'walkin',
+  801:'work',802:'walkin',803:'walkin',804:'full',805:'full',806:'full',807:'full',808:'walkin',809:'walkin',810:'walkin'
+};
+const TYPES=[
+  {id:'work',ko:'워크형',en:'Work Type',code:'A'},
+  {id:'walkin',ko:'수납강화형',en:'Walk-in Closet Type',code:'B'},
+  {id:'full',ko:'풀퍼니시드형',en:'Full-Furnished Type',code:'C'},
+  {id:'multi',ko:'멀티형',en:'Multi Type',code:'D'}
+];
+const FLOORS=[3,4,5,6,7,8];
+
+let MODE='auto'; // 'auto' | 'manual'
+let TOUR_AVAIL={work:0,walkin:0,full:0,multi:0};
+let ROW_DATA={}; // room_no -> row from anam_room_map
+let CONTACT={label_ko:'입주 문의',label_en:'Inquiries',email:'jklee@homes.global'};
+
+async function loadAll(){
+  const[{data:rows},{data:settings}]=await Promise.all([
+    SB.from('anam_room_map').select('*'),
+    SB.from('anam_settings').select('key,value').in('key',['room_status_mode','tour_availability','contact'])
+  ]);
+  (rows||[]).forEach(r=>ROW_DATA[r.room_no]=r);
+  (settings||[]).forEach(s=>{
+    if(s.key==='room_status_mode')MODE=(s.value==='manual')?'manual':'auto';
+    if(s.key==='tour_availability'){try{TOUR_AVAIL={...TOUR_AVAIL,...JSON.parse(s.value)};}catch(e){}}
+    if(s.key==='contact'){try{CONTACT={...CONTACT,...JSON.parse(s.value)};}catch(e){}}
+  });
+  document.getElementById('contact-float').href='mailto:'+CONTACT.email;
+  document.getElementById('legend-upcoming').style.display=(MODE==='manual')?'flex':'none';
+  render();
+}
+
+async function applyNavVisibility(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
+  let v={page_process:true,page_info:true,page_calc:true,page_roommap:true};
+  if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
+  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-calc':v.page_calc};
+  Object.keys(navMap).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=navMap[id]?'':'none';});
+}
+
+function statusOf(roomNo){
+  const row=ROW_DATA[roomNo];
+  if(MODE==='auto'){
+    return (row&&row.auto_status==='vacant')?'vacant':'occupied';
+  }
+  const st=(row&&row.manual_status)||'occupied';
+  return st==='upcoming'?'upcoming':(st==='vacant'?'vacant':'occupied');
+}
+
+function render(){
+  renderStats();
+  renderTypeCards();
+  renderFloors();
+  setLang(LANG);
+}
+
+function renderStats(){
+  const roomNos=Object.keys(ROOM_TYPE_MAP).map(Number);
+  const vacantCount=roomNos.filter(n=>statusOf(n)==='vacant').length;
+  let html=`<div class="stat-box"><div class="stat-num">${vacantCount}</div><div class="stat-lbl"><span class="ko">계약 가능 ${vacantCount}실</span><span class="en">${vacantCount} Rooms Available</span></div></div>`;
+  if(MODE==='manual'){
+    const tourTotal=TYPES.reduce((sum,t)=>sum+(TOUR_AVAIL[t.id]||0),0);
+    html+=`<div class="stat-box"><div class="stat-num">${tourTotal}</div><div class="stat-lbl"><span class="ko">투어 가능 ${tourTotal}실</span><span class="en">${tourTotal} Tours Available</span></div></div>`;
+  }
+  document.getElementById('stat-row').innerHTML=html;
+}
+
+function renderTypeCards(){
+  document.getElementById('type-cards').innerHTML=TYPES.map(t=>{
+    const roomsOfType=Object.keys(ROOM_TYPE_MAP).map(Number).filter(n=>ROOM_TYPE_MAP[n]===t.id);
+    const vacantCount=roomsOfType.filter(n=>statusOf(n)==='vacant').length;
+    const tourCount=MODE==='manual'?(TOUR_AVAIL[t.id]||0):0;
+    let badges='';
+    if(vacantCount>0)badges+=`<span class="tbadge contract"><span class="ko">계약 가능 ${vacantCount}</span><span class="en">Available ${vacantCount}</span></span>`;
+    if(tourCount>0)badges+=`<span class="tbadge tour"><span class="ko">투어 가능 ${tourCount}</span><span class="en">Tour ${tourCount}</span></span>`;
+    if(vacantCount===0&&tourCount===0)badges=`<span class="tbadge none"><span class="ko">공실 없음</span><span class="en">No Vacancy</span></span>`;
+    return `<div class="type-card">
+      <div class="type-card-code">${t.code} TYPE</div>
+      <div class="type-card-name"><span class="ko">${esc(t.ko)}</span><span class="en">${esc(t.en)}</span></div>
+      <div class="type-badges">${badges}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderFloors(){
+  document.getElementById('floors').innerHTML=FLOORS.map(fl=>{
+    const roomNos=Object.keys(ROOM_TYPE_MAP).map(Number).filter(n=>Math.floor(n/100)===fl).sort((a,b)=>a-b);
+    const cells=roomNos.map(n=>{
+      const st=statusOf(n);
+      const t=TYPES.find(x=>x.id===ROOM_TYPE_MAP[n]);
+      const row=ROW_DATA[n];
+      const tipDate=(st==='upcoming'&&row&&row.manual_available_from)?row.manual_available_from:'';
+      return `<div class="room-cell ${st}" ${st==='upcoming'?`onclick="toggleTip(this,'${tipDate}')"`:''}>
+        <div class="room-no">${n}</div>
+        <div class="room-type-lbl ko">${esc(t?t.ko:'')}</div>
+        <div class="room-type-lbl en">${esc(t?t.en:'')}</div>
+      </div>`;
+    }).join('');
+    return `<div class="floor-block">
+      <div class="floor-title"><span class="ko">${fl}층</span><span class="en">Floor ${fl}</span></div>
+      <div class="room-row">${cells}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTip(el,dateStr){
+  document.querySelectorAll('.room-tip').forEach(t=>t.remove());
+  if(!dateStr)return;
+  const tip=document.createElement('div');
+  tip.className='room-tip show';
+  const label=LANG==='ko'?(dateStr+' 계약 가능 예정'):('Available from '+dateStr);
+  tip.textContent=label;
+  el.appendChild(tip);
+  setTimeout(()=>{document.addEventListener('click',function h(e){if(!el.contains(e.target)){tip.remove();document.removeEventListener('click',h);}});},0);
+}
+
+setLang(LANG);
+loadAll();
+applyNavVisibility();
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root{
   --gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;
@@ -22,7 +23,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:var(--gold);text-decoration:none;}
 .nav-logo span{color:#444;font-weight:700;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
-.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);}
+.nav-link{padding:7px 10px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
 .nav-link:hover,.nav-link.active{color:var(--ink);}
 .nav-link.active{font-weight:700;}
 .lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
@@ -170,7 +171,10 @@ span.ko,span.en{display:none;}
 .lang-ko span.ko{display:inline;}
 .lang-en span.en{display:inline;}
 @media(max-width:720px){
-  nav{padding:0 var(--px-m);}
+  nav{padding:0 var(--px-m);grid-template-columns:auto 1fr auto;}
+  .nav-links{overflow-x:auto;justify-content:flex-start;gap:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-link{padding:7px 8px;font-size:11.5px;}
   .inner{padding:0 var(--px-m);}
   .section{padding:52px 0;}
   .hero{padding:48px 0 44px;}
@@ -208,8 +212,10 @@ span.ko,span.en{display:none;}
   <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
   <div class="nav-links">
     <a class="nav-link active" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
-    <a class="nav-link" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
-    <a class="nav-link" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
+    <a class="nav-link" id="navlink-roommap" href="roommap.html"><span class="ko">공실현황</span><span class="en">Availability</span></a>
+    <a class="nav-link" id="navlink-calc" href="calc.html"><span class="ko">임대료 계산하기</span><span class="en">Rent Estimator</span></a>
+    <a class="nav-link" id="navlink-process" href="process.html"><span class="ko">계약 절차</span><span class="en">Process</span></a>
+    <a class="nav-link" id="navlink-info" href="info.html"><span class="ko">FAQ</span><span class="en">FAQ</span></a>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
@@ -227,7 +233,7 @@ span.ko,span.en{display:none;}
   </div>
 </div>
 
-<section class="section sec-white" style="padding:56px 0;border-bottom:1px solid var(--line);">
+<section class="section sec-white" id="sec-yt" style="padding:56px 0;border-bottom:1px solid var(--line);">
   <div class="inner">
     <div class="s-eyebrow">HOMES Anam</div>
     <div class="s-title-lg ko">공간을 영상으로 만나보세요</div>
@@ -236,7 +242,7 @@ span.ko,span.en{display:none;}
   </div>
 </section>
 
-<section class="section sec-soft">
+<section class="section sec-soft" id="sec-info">
   <div class="inner">
     <div class="s-eyebrow">Basic Info</div>
     <div class="s-title ko">기본 정보</div>
@@ -248,7 +254,7 @@ span.ko,span.en{display:none;}
   </div>
 </section>
 
-<section class="section sec-white">
+<section class="section sec-white" id="sec-spaces">
   <div class="inner">
     <div class="s-eyebrow">Coliving Space</div>
     <div class="s-title-lg ko">공용공간</div>
@@ -260,7 +266,7 @@ span.ko,span.en{display:none;}
   </div>
 </section>
 
-<section class="section sec-soft">
+<section class="section sec-soft" id="sec-rooms">
   <div class="inner">
     <div class="s-eyebrow">Room Types</div>
     <div class="s-title-lg ko">호실 타입 및 가격</div>
@@ -277,8 +283,8 @@ span.ko,span.en{display:none;}
   <a class="contact-bar-mail" href="mailto:jklee@homes.global">
     <span class="contact-bar-icon">✉</span>
     <span>
-      <span class="ko">홈즈 안암 입주 문의</span>
-      <span class="en">HOMES Anam Inquiry</span>
+      <span class="ko">문의하기</span>
+      <span class="en">Contact Us</span>
     </span>
   </a>
   <div class="contact-bar-divider"></div>
@@ -286,9 +292,65 @@ span.ko,span.en{display:none;}
 </div>
 
 <script>
-const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','sb_publishable_TuH7QP5ejpplWGn9OiSz3w_joV0ffWJ');
+const SB=supabase.createClient(ANAM_CONFIG.url,ANAM_CONFIG.key);
 let LANG=localStorage.getItem('homes-lang')||'ko';
 let popIdx=0;
+
+/* ── fixed building layout: room number → room type id (matches anam_rooms.room_id) ── */
+const ROOM_TYPE_MAP={
+  301:'full',302:'full',303:'walkin',304:'full',305:'multi',306:'full',307:'full',308:'work',309:'full',310:'full',
+  401:'full',402:'full',403:'walkin',404:'full',405:'work',406:'full',407:'full',408:'walkin',409:'full',410:'full',
+  501:'work',502:'walkin',503:'walkin',504:'full',505:'work',506:'multi',507:'work',508:'walkin',509:'multi',510:'walkin',
+  601:'work',602:'walkin',603:'walkin',604:'full',605:'work',606:'multi',607:'work',608:'walkin',609:'multi',610:'walkin',
+  701:'work',702:'walkin',703:'walkin',704:'full',705:'work',706:'multi',707:'work',708:'walkin',709:'walkin',710:'walkin',
+  801:'work',802:'walkin',803:'walkin',804:'full',805:'full',806:'full',807:'full',808:'walkin',809:'walkin',810:'walkin'
+};
+let ROOM_MODE='auto',ROOM_TOUR_AVAIL={work:0,walkin:0,full:0,multi:0},ROOM_ROW_DATA={};
+let CONTACT={label_ko:'입주 문의',label_en:'Inquiries',email:'jklee@homes.global'};
+
+async function loadRoomStatus(){
+  const[{data:rows},{data:settings}]=await Promise.all([
+    SB.from('anam_room_map').select('room_no,manual_status,auto_status'),
+    SB.from('anam_settings').select('key,value').in('key',['room_status_mode','tour_availability'])
+  ]);
+  (rows||[]).forEach(r=>ROOM_ROW_DATA[r.room_no]=r);
+  (settings||[]).forEach(s=>{
+    if(s.key==='room_status_mode')ROOM_MODE=(s.value==='manual')?'manual':'auto';
+    if(s.key==='tour_availability'){try{ROOM_TOUR_AVAIL={...ROOM_TOUR_AVAIL,...JSON.parse(s.value)};}catch(e){}}
+  });
+}
+function roomStatusOf(roomNo){
+  const row=ROOM_ROW_DATA[roomNo];
+  if(ROOM_MODE==='auto')return(row&&row.auto_status==='vacant')?'vacant':'occupied';
+  const st=(row&&row.manual_status)||'occupied';
+  return st==='upcoming'?'upcoming':(st==='vacant'?'vacant':'occupied');
+}
+function typeBadgesHtml(roomId){
+  const roomNos=Object.keys(ROOM_TYPE_MAP).map(Number).filter(n=>ROOM_TYPE_MAP[n]===roomId);
+  const vacantCount=roomNos.filter(n=>roomStatusOf(n)==='vacant').length;
+  const tourCount=ROOM_MODE==='manual'?(ROOM_TOUR_AVAIL[roomId]||0):0;
+  let html='';
+  if(vacantCount>0)html+=`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Contract Available</span></span>`;
+  if(tourCount>0)html+=`<span class="badge-pill badge-tour"><span class="ko">투어 가능</span><span class="en">Tour Available</span></span>`;
+  if(vacantCount===0&&tourCount===0)html=`<span class="badge-pill badge-novacancy"><span class="ko">공실 없음</span><span class="en">No Vacancy</span></span>`;
+  return html;
+}
+async function applyVisibility(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
+  let v={sec_yt:true,sec_info:true,sec_spaces:true,sec_rooms:true,page_process:true,page_info:true,page_calc:true,page_roommap:true};
+  if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
+  const map={'sec-yt':v.sec_yt,'sec-info':v.sec_info,'sec-spaces':v.sec_spaces,'sec-rooms':v.sec_rooms};
+  Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=map[id]?'':'none';});
+  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-calc':v.page_calc,'navlink-roommap':v.page_roommap};
+  Object.keys(navMap).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=navMap[id]?'':'none';});
+}
+async function loadContact(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','contact').single();
+  if(data){try{CONTACT={...CONTACT,...JSON.parse(data.value)};}catch(e){}}
+  document.querySelectorAll('.contact-bar-mail,.contact-bar-addr').forEach(el=>{if(el.tagName==='A')el.href='mailto:'+CONTACT.email;else el.textContent=CONTACT.email;});
+  document.querySelectorAll('.contact-bar-label.ko').forEach(el=>el.textContent=CONTACT.label_ko);
+  document.querySelectorAll('.contact-bar-label.en').forEach(el=>el.textContent=CONTACT.label_en);
+}
 
 function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
 
@@ -388,11 +450,7 @@ async function renderRooms(){
           ?[r.img1,r.img2].filter(Boolean).map((img,ii)=>`<img class="room-slide-img${ii===0?' active':''}" src="${driveUrl(img)}" alt="">`).join('')
           :`<div class="room-ph"><span class="ko">사진 준비 중</span><span class="en">Photo coming soon</span></div>`}
         ${r.img1&&r.img2?`<button class="slide-btn prev" onclick="slideRoom(${ri},-1)">‹</button><button class="slide-btn next" onclick="slideRoom(${ri},1)">›</button>`:''}
-        <div class="room-badges">
-          ${r.badge_tour?`<span class="badge-pill badge-tour"><span class="ko">투어 가능</span><span class="en">Tour Available</span></span>`:''}
-          ${r.badge_contract?`<span class="badge-pill badge-contract"><span class="ko">계약 가능</span><span class="en">Contract Available</span></span>`:''}
-          ${r.badge_no_vacancy?`<span class="badge-pill badge-novacancy"><span class="ko">공실 없음</span><span class="en">No Vacancy</span></span>`:''}
-        </div>
+        <div class="room-badges">${typeBadgesHtml(r.room_id)}</div>
       </div>
       <div class="room-body">
         <div class="room-type ko">${esc(r.type_ko)}</div><div class="room-type en">${esc(r.type_en)}</div>
@@ -417,7 +475,9 @@ function slideRoom(ri,dir){
 }
 
 setLang(LANG);
-renderPopup();renderYT();renderInfo();renderSpaces();renderRooms();
+applyVisibility();
+renderPopup();renderYT();renderInfo();renderSpaces();loadContact();
+loadRoomStatus().then(renderRooms);
 </script>
 </body>
 </html>

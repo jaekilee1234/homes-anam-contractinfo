@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>상세 정보 | HOMES Anam</title>
+<title>FAQ | HOMES Anam</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -15,7 +16,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
 .nav-logo span{color:#1a1a1a;font-weight:700;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
-.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);}
+.nav-link{padding:7px 10px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
 .nav-link:hover,.nav-link.active{color:var(--ink);}
 .nav-link.active{font-weight:700;}
 .lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
@@ -61,7 +62,13 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 span.ko,span.en{display:none;}
 .lang-ko span.ko{display:inline;}
 .lang-en span.en{display:inline;}
-@media(max-width:720px){nav,.toolbar{padding-left:20px;padding-right:20px;}.toolbar{top:64px;}.main{padding:24px 20px 60px;}.hero{padding:32px 20px 28px;}}
+@media(max-width:720px){
+  nav{grid-template-columns:auto 1fr auto;}
+  .nav-links{overflow-x:auto;justify-content:flex-start;gap:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-link{padding:7px 8px;font-size:11.5px;}
+  nav,.toolbar{padding-left:20px;padding-right:20px;}.toolbar{top:64px;}.main{padding:24px 20px 60px;}.hero{padding:32px 20px 28px;}
+}
 </style>
 </head>
 <body class="lang-ko">
@@ -69,8 +76,10 @@ span.ko,span.en{display:none;}
   <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
   <div class="nav-links">
     <a class="nav-link" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
-    <a class="nav-link" href="process.html"><span class="ko">계약 단계</span><span class="en">Process</span></a>
-    <a class="nav-link active" href="info.html"><span class="ko">상세 정보</span><span class="en">Info</span></a>
+    <a class="nav-link" id="navlink-roommap" href="roommap.html"><span class="ko">공실현황</span><span class="en">Availability</span></a>
+    <a class="nav-link" id="navlink-calc" href="calc.html"><span class="ko">임대료 계산하기</span><span class="en">Rent Estimator</span></a>
+    <a class="nav-link" id="navlink-process" href="process.html"><span class="ko">계약 절차</span><span class="en">Process</span></a>
+    <a class="nav-link active" href="info.html"><span class="ko">FAQ</span><span class="en">FAQ</span></a>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
@@ -78,9 +87,9 @@ span.ko,span.en{display:none;}
   </div>
 </nav>
 <div class="hero">
-  <div class="hero-badge">INFO</div>
-  <h1><span class="ko">상세 정보</span><span class="en">Detailed Info</span></h1>
-  <p><span class="ko">계약 관련 정보</span><span class="en">Contract-related information</span></p>
+  <div class="hero-badge">FAQ</div>
+  <h1><span class="ko">FAQ</span><span class="en">FAQ</span></h1>
+  <p><span class="ko">자주 묻는 질문과 계약 관련 상세 정보</span><span class="en">Frequently asked questions and detailed contract information</span></p>
 </div>
 <div class="toolbar">
   <div class="search-box">
@@ -93,11 +102,24 @@ span.ko,span.en{display:none;}
   <div class="count" id="count"></div>
   <div id="items-list"></div>
 </div>
-<a class="float-btn" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
+<a class="float-btn" id="contact-float" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
 <script>
-const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','sb_publishable_TuH7QP5ejpplWGn9OiSz3w_joV0ffWJ');
+const SB=supabase.createClient(ANAM_CONFIG.url,ANAM_CONFIG.key);
 let LANG=localStorage.getItem('homes-lang')||'ko';
 let allCols=[],allItems=[],activeCol='all';
+async function loadContact(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','contact').single();
+  let c={email:'jklee@homes.global'};
+  if(data){try{c={...c,...JSON.parse(data.value)};}catch(e){}}
+  document.getElementById('contact-float').href='mailto:'+c.email;
+}
+async function applyNavVisibility(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
+  let v={page_process:true,page_info:true,page_calc:true,page_roommap:true};
+  if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
+  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-calc':v.page_calc,'navlink-roommap':v.page_roommap};
+  Object.keys(navMap).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=navMap[id]?'':'none';});
+}
 
 function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');document.getElementById('search-input').placeholder=l==='ko'?'제목으로 검색...':'Search by title...';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -176,7 +198,7 @@ function toggleAcc(idx){
   body.classList.toggle('open',!open);chev.classList.toggle('open',!open);
 }
 
-setLang(LANG);loadData();
+setLang(LANG);loadData();loadContact();applyNavVisibility();
 </script>
 </body>
 </html>

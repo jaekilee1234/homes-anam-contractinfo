@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>임대료 계산하기 | HOMES Anam</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--soft);color:var(--ink);-webkit-font-smoothing:antialiased;}
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;}
+.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
+.nav-logo span{color:#1a1a1a;font-weight:700;}
+.nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
+.nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
+.nav-link:hover,.nav-link.active{color:var(--ink);}
+.nav-link.active{font-weight:700;}
+.lang-toggle{display:flex;gap:2px;background:var(--soft);border-radius:8px;padding:3px;justify-self:end;}
+.lang-btn{padding:5px 11px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;}
+.lang-btn.active{background:var(--navy);color:#fff;}
+.hero{background:var(--navy);padding:52px 48px 44px;text-align:center;}
+.hero-badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.08em;margin-bottom:16px;}
+.hero h1{color:#fff;font-size:28px;font-weight:800;margin-bottom:10px;line-height:1.3;}
+.hero p{color:rgba(255,255,255,.6);font-size:14px;line-height:1.6;max-width:520px;margin:0 auto;}
+.main{max-width:760px;margin:0 auto;padding:44px 48px 100px;}
+.calc-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.calc-fg{display:flex;flex-direction:column;gap:6px;}
+.calc-fg label{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
+.pill{display:inline-block;background:var(--soft);border:1px solid var(--line);color:var(--gray);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0;text-transform:none;}
+.calc-fg input[type=date]{font-family:var(--font);font-size:13.5px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%;}
+.calc-fg input:focus{outline:none;border-color:var(--navy);}
+.calc-btn-row{margin-top:18px;display:flex;justify-content:flex-end;}
+.calc-btn{padding:11px 26px;border:none;border-radius:9px;background:var(--navy);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;font-family:var(--font);}
+.calc-btn:hover{background:#0d1460;}
+.calc-msg{margin-top:12px;padding:11px 14px;border-radius:9px;font-size:12.5px;line-height:1.6;display:none;}
+.calc-msg.show{display:block;}
+.calc-msg.err{background:#fdecec;color:#c0392b;border:1px solid #f6c8c8;}
+.calc-msg.info{background:var(--soft);color:var(--gray);border:1px solid var(--line);}
+.calc-result{display:none;margin-top:26px;border-top:1px solid var(--line);padding-top:24px;}
+.calc-result.show{display:block;}
+.calc-period{font-size:12.5px;color:var(--muted);margin-bottom:16px;font-variant-numeric:tabular-nums;font-weight:600;}
+.calc-tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.calc-tbl td:not(:first-child),.calc-tbl th:not(:first-child){white-space:nowrap;}
+.calc-tbl{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;}
+.calc-tbl th,.calc-tbl td{padding:9px 6px;text-align:right;border-bottom:1px solid var(--line);}
+.calc-tbl th:first-child,.calc-tbl td:first-child{text-align:left;}
+.calc-tbl thead th{color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+.calc-tbl tfoot td{font-weight:800;font-size:13.5px;border-top:2px solid var(--navy);border-bottom:none;padding-top:12px;}
+.d-m{display:inline;color:var(--muted);font-size:11px;margin-left:6px;}
+@media(max-width:480px){
+  .calc-tbl{font-size:10.5px;}
+  .calc-tbl th,.calc-tbl td{padding:8px 2px;}
+  .calc-tbl .p-y,.calc-tbl .p-r{display:block;}
+  .calc-tbl .p-r{color:var(--muted);font-size:10px;}
+  .calc-tbl thead th,.calc-tbl thead th:not(:first-child){font-size:9.5px;letter-spacing:0;white-space:normal;line-height:1.25;vertical-align:bottom;}
+  .d-m{display:block;margin-left:0;font-size:10px;margin-top:1px;}
+}
+.calc-deposit{background:var(--soft);border-radius:10px;padding:14px 16px;font-size:12.5px;margin-top:16px;}
+.calc-deposit .row{display:flex;justify-content:space-between;padding:4px 0;gap:8px;}
+.calc-deposit .row.tot{font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px;}
+.calc-note{background:var(--soft);border-radius:10px;padding:13px 15px;font-size:11.5px;color:var(--muted);margin-top:16px;line-height:1.7;}
+.calc-cta{display:flex;justify-content:center;margin-top:22px;}
+.calc-cta a{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:40px;background:var(--gold);color:var(--navy);font-weight:800;font-size:13.5px;text-decoration:none;transition:.15s;}
+.calc-cta a:hover{background:#e6ba00;}
+/* promo popup */
+.promo-overlay{position:fixed;inset:0;background:rgba(2,4,37,.55);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;}
+.promo-overlay.open{opacity:1;pointer-events:auto;}
+.promo-box{background:#fff;border-radius:18px;overflow:hidden;width:min(380px,88vw);box-shadow:0 24px 64px rgba(2,4,37,.25);}
+.promo-chip-wrap{background:var(--navy);padding:22px 24px 20px;}
+.promo-chip{display:inline-block;background:var(--gold);color:var(--navy);font-size:15px;font-weight:900;padding:7px 14px;border-radius:8px;letter-spacing:-0.01em;}
+.promo-body{padding:22px 24px 6px;color:#1a1a1a;font-size:13.5px;line-height:1.75;}
+.promo-body b{color:var(--ink);}
+.promo-foot{padding:16px 24px 22px;text-align:right;}
+.promo-close{font-family:var(--font);font-size:12.5px;font-weight:700;color:#fff;background:var(--navy);border:none;cursor:pointer;padding:9px 20px;border-radius:8px;}
+.promo-close:hover{background:#0d1460;}
+.float-btn{position:fixed;bottom:28px;right:28px;z-index:300;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:40px;background:var(--navy);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(2,4,37,.18);transition:.15s;}
+.float-btn:hover{background:#0d1460;transform:translateY(-1px);}
+.ko,.en{display:none;}
+.lang-ko .ko{display:block;}
+.lang-en .en{display:block;}
+span.ko,span.en{display:none;}
+.lang-ko span.ko{display:inline;}
+.lang-en span.en{display:inline;}
+@media(max-width:720px){
+  nav{padding:0 20px;grid-template-columns:auto 1fr auto;}
+  .nav-links{overflow-x:auto;justify-content:flex-start;gap:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-link{padding:7px 8px;font-size:11.5px;}
+  .main{padding:28px 20px 80px;}.hero{padding:36px 20px 32px;}.calc-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body class="lang-ko">
+<nav>
+  <a class="nav-logo" href="index.html">HOMES<span>&nbsp;Anam</span></a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html"><span class="ko">홈</span><span class="en">Home</span></a>
+    <a class="nav-link" id="navlink-roommap" href="roommap.html"><span class="ko">공실현황</span><span class="en">Availability</span></a>
+    <a class="nav-link active" href="calc.html"><span class="ko">임대료 계산하기</span><span class="en">Rent Estimator</span></a>
+    <a class="nav-link" id="navlink-process" href="process.html"><span class="ko">계약 절차</span><span class="en">Process</span></a>
+    <a class="nav-link" id="navlink-info" href="info.html"><span class="ko">FAQ</span><span class="en">FAQ</span></a>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ko" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-badge"><span class="ko">예상 임대료 계산</span><span class="en">Rent Estimator</span></div>
+  <h1><span class="ko">임대료 계산하기</span><span class="en">Estimate Your Rent</span></h1>
+  <p><span class="ko">입주 예정일과 퇴실 예정일을 입력하면 예상 임대료를 계산해 드립니다.</span><span class="en">Enter your expected move-in and move-out dates to estimate your total rent.</span></p>
+</div>
+<div class="main">
+  <div class="calc-card">
+    <div class="calc-grid">
+      <div class="calc-fg">
+        <label><span class="ko">입주 예정일</span><span class="en">Move-in Date</span></label>
+        <input type="date" id="calc-start">
+      </div>
+      <div class="calc-fg">
+        <label><span class="ko">퇴실 예정일</span><span class="en">Move-out Date</span> <span class="pill"><span class="ko">4개월~1년</span><span class="en">4mo–1yr</span></span></label>
+        <input type="date" id="calc-end">
+      </div>
+    </div>
+    <div class="calc-btn-row">
+      <button class="calc-btn" onclick="runCalc()"><span class="ko">계산하기</span><span class="en">Calculate</span></button>
+    </div>
+    <div class="calc-msg" id="calc-msg"></div>
+
+    <div class="calc-result" id="calc-result">
+      <div class="calc-period" id="calc-period"></div>
+      <div class="calc-tbl-wrap"><table class="calc-tbl">
+        <thead><tr>
+          <th><span class="ko">기간</span><span class="en">Period</span></th>
+          <th><span class="ko">임대료</span><span class="en">Rent</span></th>
+          <th><span class="ko">관리비</span><span class="en">Utilities</span></th>
+          <th><span class="ko">퇴실청소비</span><span class="en">Move-out Cleaning</span></th>
+          <th><span class="ko">소계</span><span class="en">Subtotal</span></th>
+        </tr></thead>
+        <tbody id="calc-rows"></tbody>
+        <tfoot>
+          <tr><td colspan="4"><span class="ko">임대 기간 합계 (보증금 제외)</span><span class="en">Total (excl. deposit)</span></td><td id="calc-grand-total"></td></tr>
+        </tfoot>
+      </table></div>
+
+      <div class="calc-deposit">
+        <div class="row tot"><span><span class="ko">보증금 (계약 종료 시 반환)</span><span class="en">Deposit (refunded at move-out)</span></span><span id="calc-dep-total"></span></div>
+        <div class="row"><span><span class="ko">　- 계약 시 계약금</span><span class="en">　- Down payment at signing</span></span><span id="calc-dep-1"></span></div>
+        <div class="row"><span><span class="ko">　- 입주 시 잔금</span><span class="en">　- Balance at move-in</span></span><span id="calc-dep-2"></span></div>
+      </div>
+
+      <div class="calc-note">
+        <span class="ko">· 입주월·퇴실월의 임대료·관리비는 실제 거주 일수만큼 일할 계산됩니다.<br>· 퇴실청소비는 퇴실월에 1회 후불로 청구됩니다.<br>· 본 계산 결과는 예상 금액이며, 실제 계약 조건과 다를 수 있습니다.</span>
+        <span class="en">· Rent and utilities for the move-in/move-out month are prorated by actual days occupied.<br>· The move-out cleaning fee is billed once, post-paid, in the final month.<br>· This is an estimate only; final contract terms may differ.</span>
+      </div>
+
+      <div class="calc-cta">
+        <a id="calc-cta-link" href="#"><span>✉</span><span class="ko">문의하기</span><span class="en">Contact Us</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="promo-overlay" id="promo-overlay">
+  <div class="promo-box">
+    <div class="promo-chip-wrap"><div class="promo-chip"><span class="ko">장기 프로모션 적용!</span><span class="en">Long-Term Promotion Applied!</span></div></div>
+    <div class="promo-body">
+      <p class="ko">10개월 이상 계약 시 임대료가 할인되어, 총 <b id="promo-amt-ko"></b>이 절감되었습니다.</p>
+      <p class="en">Stays of 10 months or longer receive a discounted rent — you save a total of <b id="promo-amt-en"></b> in rent.</p>
+    </div>
+    <div class="promo-foot"><button class="promo-close" onclick="closePromo()"><span class="ko">닫기</span><span class="en">Close</span></button></div>
+  </div>
+</div>
+
+<a class="float-btn" id="contact-float" href="mailto:jklee@homes.global">✉ <span class="ko">문의하기</span><span class="en">Contact Us</span></a>
+
+<script>
+const SB=supabase.createClient(ANAM_CONFIG.url,ANAM_CONFIG.key);
+let LANG=localStorage.getItem('homes-lang')||'ko';
+function setLang(l){LANG=l;localStorage.setItem('homes-lang',l);document.body.className='lang-'+l;document.getElementById('btn-ko').classList.toggle('active',l==='ko');document.getElementById('btn-en').classList.toggle('active',l==='en');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
+
+/* ── admin-editable calculator config (anam_settings key: calc_config) ── */
+let CFG={
+  rate_short:1350000, rate_long:1200000, mgmt:259000, clean:120000,
+  deposit_total:2000000, deposit1:1000000, deposit2:1000000,
+  min_months:4, max_months:12, lt_months:10, promo_enabled:true
+};
+let CONTACT={label_ko:'입주 문의',label_en:'Inquiries',email:'jklee@homes.global'};
+
+async function loadConfig(){
+  const{data}=await SB.from('anam_settings').select('key,value').in('key',['calc_config','contact']);
+  (data||[]).forEach(row=>{
+    if(row.key==='calc_config'){try{CFG={...CFG,...JSON.parse(row.value)};}catch(e){}}
+    if(row.key==='contact'){try{CONTACT={...CONTACT,...JSON.parse(row.value)};}catch(e){}}
+  });
+  const btn=document.getElementById('contact-float');
+  btn.href='mailto:'+CONTACT.email;
+}
+
+async function applyNavVisibility(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
+  let v={page_process:true,page_info:true,page_calc:true,page_roommap:true};
+  if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
+  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-roommap':v.page_roommap};
+  Object.keys(navMap).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=navMap[id]?'':'none';});
+}
+
+/* ── date helpers ── */
+function parseDate(v){ // 'YYYY-MM-DD' -> Date at local midnight
+  const[y,m,d]=v.split('-').map(Number);
+  return new Date(y,m-1,d);
+}
+function ymd(d){return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');}
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+
+// derive contract length in months from move-in/move-out dates
+// relationship: start + N months - 1 day = end  =>  N = full-month diff, +1 if end.date >= start.date
+function diffMonths(start,end){
+  let months=(end.getFullYear()-start.getFullYear())*12+(end.getMonth()-start.getMonth());
+  if(end.getDate()>=start.getDate())months+=1;
+  return months;
+}
+
+function buildSchedule(start,end,monthlyRate){
+  const segs=[];
+  let cur=new Date(start.getFullYear(),start.getMonth(),start.getDate());
+  while(cur<=end){
+    const y=cur.getFullYear(),m=cur.getMonth();
+    const mEndDate=daysInMonth(y,m);
+    const monthEnd=new Date(y,m,mEndDate);
+    const segStart=cur;
+    const segEnd=monthEnd<end?monthEnd:end;
+    const occDays=Math.round((segEnd-segStart)/86400000)+1;
+    const isFull=(segStart.getDate()===1)&&(segEnd.getDate()===mEndDate);
+    const rent=isFull?monthlyRate:Math.round(monthlyRate*occDays/mEndDate);
+    const mgmt=isFull?CFG.mgmt:Math.round(CFG.mgmt*occDays/mEndDate);
+    segs.push({y,m,segStart,segEnd,occDays,daysInMonth:mEndDate,isFull,rent,mgmt});
+    cur=new Date(y,m+1,1);
+  }
+  return segs;
+}
+
+let lastCalc=null;
+
+function showMsg(type,html){
+  const el=document.getElementById('calc-msg');
+  el.className='calc-msg show '+type;
+  el.innerHTML=html;
+}
+function hideMsg(){document.getElementById('calc-msg').className='calc-msg';}
+
+function runCalc(){
+  hideMsg();
+  document.getElementById('calc-result').classList.remove('show');
+  const sv=document.getElementById('calc-start').value;
+  const ev=document.getElementById('calc-end').value;
+  if(!sv||!ev){
+    showMsg('err','<span class="ko">입주 예정일과 퇴실 예정일을 모두 선택해 주세요.</span><span class="en">Please select both a move-in and move-out date.</span>');
+    return;
+  }
+  const start=parseDate(sv), end=parseDate(ev);
+  if(end<=start){
+    showMsg('err','<span class="ko">퇴실 예정일은 입주 예정일보다 나중이어야 합니다.</span><span class="en">The move-out date must be after the move-in date.</span>');
+    return;
+  }
+  const months=diffMonths(start,end);
+  if(months<CFG.min_months){
+    showMsg('err','<span class="ko">최소 계약 기간은 '+CFG.min_months+'개월입니다.</span><span class="en">The minimum contract length is '+CFG.min_months+' months.</span>');
+    return;
+  }
+  if(months>CFG.max_months){
+    showMsg('err','<span class="ko">최대 계약 기간은 '+CFG.max_months+'개월(1년)입니다.</span><span class="en">The maximum contract length is '+CFG.max_months+' months (1 year).</span>');
+    return;
+  }
+
+  const isLongTerm=CFG.promo_enabled&&months>=CFG.lt_months;
+  const monthlyRate=isLongTerm?CFG.rate_long:CFG.rate_short;
+  const segs=buildSchedule(start,end,monthlyRate);
+
+  let grand=0;
+  const rowsHtml=segs.map((s,i)=>{
+    const isLast=i===segs.length-1;
+    const clean=isLast?CFG.clean:0;
+    const sub=s.rent+s.mgmt+clean;
+    grand+=sub;
+    const label='<span class="p-y">'+s.y+'.'+String(s.m+1).padStart(2,'0')+'</span> <span class="p-r">('+ymd(s.segStart).slice(5)+'~'+ymd(s.segEnd).slice(5)+')</span>';
+    return '<tr><td>'+label+'<span class="d-m"><span class="ko">'+s.occDays+'/'+s.daysInMonth+'일</span><span class="en">'+s.occDays+'/'+s.daysInMonth+' days</span></span></td>'+
+      '<td>'+fmt(s.rent)+'</td>'+
+      '<td>'+fmt(s.mgmt)+'</td>'+
+      '<td>'+(clean?fmt(clean):'-')+'</td>'+
+      '<td>'+fmt(sub)+'</td></tr>';
+  }).join('');
+
+  document.getElementById('calc-period').textContent=ymd(start)+' ~ '+ymd(end)+'  ('+months+(LANG==='ko'?'개월':' mo.')+')';
+  document.getElementById('calc-rows').innerHTML=rowsHtml;
+  document.getElementById('calc-grand-total').textContent=fmt(grand);
+  document.getElementById('calc-dep-total').textContent=fmt(CFG.deposit_total);
+  document.getElementById('calc-dep-1').textContent=fmt(CFG.deposit1);
+  document.getElementById('calc-dep-2').textContent=fmt(CFG.deposit2);
+  document.getElementById('calc-result').classList.add('show');
+
+  if(isLongTerm){
+    // 표와 같은 일할 계산 방식으로 단기 임대료 총액과 장기 임대료 총액을 각각 구해 그 차이를 절감액으로 표시
+    const sumRent=a=>a.reduce((s,x)=>s+x.rent,0);
+    const savings=sumRent(buildSchedule(start,end,CFG.rate_short))-sumRent(segs);
+    document.getElementById('promo-amt-ko').textContent=fmt(savings)+'원';
+    document.getElementById('promo-amt-en').textContent=fmt(savings)+' KRW';
+    hideMsg();
+    if(savings>0)openPromo();
+  }else{
+    showMsg('info','<span class="ko">단기 계약 프로모션은 별도 문의 바랍니다.</span><span class="en">Please contact us separately for short-term contract promotions.</span>');
+  }
+
+  lastCalc={start,end,months,grand};
+  updateCta();
+}
+
+function openPromo(){document.getElementById('promo-overlay').classList.add('open');}
+function closePromo(){document.getElementById('promo-overlay').classList.remove('open');}
+
+function updateCta(){
+  if(!lastCalc)return;
+  const{start,end,months,grand}=lastCalc;
+  const subjectKo=`[홈즈 안암] 임대료 문의 (${months}개월)`;
+  const subjectEn=`[HOMES Anam] Rent Inquiry (${months} mo.)`;
+  const subject=LANG==='ko'?subjectKo:subjectEn;
+  const bodyKo=`안녕하세요, 홈즈 안암 입주 문의드립니다.\n\n- 입주 예정일: ${ymd(start)}\n- 퇴실 예정일: ${ymd(end)}\n- 계약 기간: ${months}개월\n- 예상 임대 기간 합계(보증금 제외): ${fmt(grand)}원\n\n감사합니다.`;
+  const bodyEn=`Hello, I'd like to inquire about moving into HOMES Anam.\n\n- Move-in date: ${ymd(start)}\n- Move-out date: ${ymd(end)}\n- Contract length: ${months} months\n- Estimated total (excl. deposit): ${fmt(grand)} KRW\n\nThank you.`;
+  const body=LANG==='ko'?bodyKo:bodyEn;
+  document.getElementById('calc-cta-link').href='mailto:'+CONTACT.email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+
+const _setLang=setLang;
+setLang=function(l){_setLang(l);updateCta();};
+
+setLang(LANG);
+loadConfig();
+applyNavVisibility();
+</script>
+<!-- ct-modal: 문의하기 팝업 (메일 주소·복사·Gmail) -->
+<style>
+.ct-ov{position:fixed;inset:0;z-index:900;background:rgba(2,4,37,.55);display:none;align-items:center;justify-content:center;padding:16px;}
+.ct-ov.open{display:flex;}
+.ct-box{position:relative;background:#fff;border-radius:18px;width:min(400px,100%);padding:28px 24px 22px;box-shadow:0 24px 64px rgba(2,4,37,.3);font-family:inherit;color:#020425;text-align:center;}
+.ct-x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:20px;line-height:1;color:#888;cursor:pointer;padding:6px;}
+.ct-lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6F7A83;margin-bottom:10px;}
+.ct-mail{font-size:20px;font-weight:800;word-break:break-all;user-select:all;-webkit-user-select:all;margin-bottom:6px;}
+.ct-phone{display:none;margin:4px 0 2px;font-size:18px;font-weight:800;}
+.ct-phone a{color:#020425;text-decoration:none;border-bottom:2px solid #FFCF0D;}
+.ct-btns{display:flex;flex-direction:column;gap:8px;margin-top:18px;}
+.ct-btn{display:block;width:100%;box-sizing:border-box;padding:13px 16px;border-radius:12px;border:1px solid #E7DDC6;background:#fff;color:#020425;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit;}
+.ct-btn.pri{background:#FFCF0D;border-color:#FFCF0D;}
+.ct-btn:hover{filter:brightness(.97);}
+.ct-hint{margin-top:14px;font-size:11.5px;line-height:1.6;color:#888;}
+.ct-ov .ko,.ct-ov .en{display:none;}
+.lang-ko .ct-ov .ko,.lang-en .ct-ov .en{display:inline;}
+.lang-ko .ct-ov .ko.blk,.lang-en .ct-ov .en.blk{display:block;}
+</style>
+<div class="ct-ov" id="ct-ov" role="dialog" aria-modal="true">
+  <div class="ct-box">
+    <button class="ct-x" id="ct-x" aria-label="close">✕</button>
+    <div class="ct-lbl" id="ct-lbl"></div>
+    <div class="ct-mail" id="ct-mail"></div>
+    <div class="ct-phone" id="ct-phone"></div>
+    <div class="ct-btns">
+      <a class="ct-btn pri" id="ct-mailto" href="#"><span class="ko">메일 앱으로 열기</span><span class="en">Open in mail app</span></a>
+      <a class="ct-btn" id="ct-gmail" href="#" target="_blank" rel="noopener"><span class="ko">Gmail로 메일 쓰기</span><span class="en">Write in Gmail</span></a>
+      <button class="ct-btn" id="ct-copy" type="button"><span class="ko">메일 주소 복사</span><span class="en">Copy email address</span></button>
+    </div>
+    <div class="ct-hint"><span class="ko blk">메일 앱이 열리지 않으면 Gmail로 쓰거나, 주소를 복사해 사용하시는 메일에서 보내 주세요.</span><span class="en blk">If your mail app does not open, use Gmail or copy the address and write from your own email.</span></div>
+  </div>
+</div>
+<script>
+(function(){
+  var C={label_ko:'입주 문의',label_en:'Inquiries',email:'',phone:''},loaded=false,opts={};
+  function L(){return document.body.classList.contains('lang-en')?'en':'ko';}
+  function $(i){return document.getElementById(i);}
+  function pageEmail(){var a=$('contact-float')||document.querySelector('.contact-bar-mail');var h=a?(a.getAttribute('href')||''):'';var m=h.match(/^mailto:([^?]+)/i);return m?decodeURIComponent(m[1]):'';}
+  async function load(){
+    if(loaded)return;loaded=true;
+    try{if(typeof SB!=='undefined'){var r=await SB.from('anam_settings').select('value').eq('key','contact').maybeSingle();if(r&&r.data&&r.data.value)C=Object.assign(C,JSON.parse(r.data.value));}}catch(e){}
+    if(!C.email)C.email=pageEmail()||'jklee@homes.global';
+  }
+  function render(){
+    var q=[];if(opts.subject)q.push('subject='+encodeURIComponent(opts.subject));if(opts.body)q.push('body='+encodeURIComponent(opts.body));
+    var g=['view=cm','fs=1','to='+encodeURIComponent(C.email)];if(opts.subject)g.push('su='+encodeURIComponent(opts.subject));if(opts.body)g.push('body='+encodeURIComponent(opts.body));
+    $('ct-lbl').textContent=(L()==='en'?C.label_en:C.label_ko)||'';
+    $('ct-mail').textContent=C.email;
+    $('ct-mailto').href='mailto:'+C.email+(q.length?'?'+q.join('&'):'');
+    $('ct-gmail').href='https://mail.google.com/mail/?'+g.join('&');
+    var p=$('ct-phone');p.innerHTML='';
+    if(C.phone){var a=document.createElement('a');a.href='tel:'+String(C.phone).replace(/[^0-9+]/g,'');a.textContent=C.phone;p.appendChild(a);p.style.display='block';}else p.style.display='none';
+  }
+  async function open(o){opts=o||{};await load();render();$('ct-ov').classList.add('open');}
+  function close(){$('ct-ov').classList.remove('open');}
+  function copy(){
+    var t=C.email,btn=$('ct-copy'),orig=btn.innerHTML;
+    function ok(){btn.textContent=L()==='en'?'Copied ✓':'복사되었습니다 ✓';setTimeout(function(){btn.innerHTML=orig;},1800);}
+    function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('#contact-float,.contact-bar-mail,#calc-cta-link');
+    if(a){e.preventDefault();var o={};if(a.id==='calc-cta-link'){var h=a.getAttribute('href')||'';var qs=h.split('?')[1];if(qs){var P=new URLSearchParams(qs);o.subject=P.get('subject')||'';o.body=P.get('body')||'';}}open(o);return;}
+    if(e.target.id==='ct-ov'||e.target.id==='ct-x')close();
+    if(e.target.closest&&e.target.closest('#ct-copy'))copy();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script>
+</body>
+</html>

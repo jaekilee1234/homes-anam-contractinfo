@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f6f7f9;--ink:#2d2d2d;--muted:#888;--red:#e53e3e;--green:#38a169;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -69,21 +70,43 @@ textarea{min-height:72px;}
 #toast.ok{background:var(--green);}
 #toast.err{background:var(--red);}
 @media(max-width:600px){.fr{grid-template-columns:1fr;}header,.tabs{padding-left:14px;padding-right:14px;}.main{padding:18px 12px 60px;}}
+
+#loginGate{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:16px}
+#loginGate .box{background:#fff;border-radius:14px;padding:28px 24px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#loginGate h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+#loginGate p.sub{margin:0 0 16px;font-size:12px;color:var(--muted)}
+#loginGate input{width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:var(--font)}
+#loginGate button{width:100%;padding:11px;border:0;border-radius:8px;background:var(--gold);color:var(--navy);font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font)}
+#loginGate .err{color:var(--red);font-size:12px;min-height:16px;margin-top:8px}
 </style>
 </head>
 <body>
+<div id="loginGate">
+  <form class="box" onsubmit="doLogin(event)">
+    <h2>HOMES Anam 관리자</h2>
+    <p class="sub">관리자 계정으로 로그인해 주세요.</p>
+    <input id="lgEmail" type="email" placeholder="이메일" autocomplete="username" required>
+    <input id="lgPw" type="password" placeholder="비밀번호" autocomplete="current-password" required>
+    <button type="submit" id="lgBtn">로그인</button>
+    <div class="err" id="lgErr"></div>
+  </form>
+</div>
 <header>
   <div class="h-left"><span class="h-logo">HOMES Anam</span><span class="h-badge">ADMIN</span></div>
   <div class="h-right">
     <a class="btn btn-ghost-w" href="index.html" target="_blank">↗ 홈</a>
-    <a class="btn btn-ghost-w" href="process.html" target="_blank">↗ 계약단계</a>
-    <a class="btn btn-ghost-w" href="info.html" target="_blank">↗ 상세정보</a>
+    <a class="btn btn-ghost-w" href="roommap.html" target="_blank">↗ 공실현황</a>
+    <a class="btn btn-ghost-w" href="calc.html" target="_blank">↗ 계산기</a>
+    <a class="btn btn-ghost-w" href="process.html" target="_blank">↗ 계약 절차</a>
+    <a class="btn btn-ghost-w" href="info.html" target="_blank">↗ FAQ</a>
+    <button class="btn btn-ghost-w" onclick="doLogout()">로그아웃</button>
   </div>
 </header>
 <div class="tabs">
   <button class="tab active" onclick="switchTab('main',this)">메인페이지</button>
-  <button class="tab" onclick="switchTab('process',this)">계약 단계</button>
-  <button class="tab" onclick="switchTab('info',this)">상세 정보</button>
+  <button class="tab" onclick="switchTab('process',this)">계약 절차</button>
+  <button class="tab" onclick="switchTab('info',this)">FAQ</button>
+  <button class="tab" onclick="switchTab('settings',this)">운영 설정</button>
 </div>
 <div class="main">
 
@@ -121,7 +144,7 @@ textarea{min-height:72px;}
   <!-- PROCESS -->
   <div class="panel" id="panel-process">
     <div class="card">
-      <div class="card-title">계약 단계 (11단계)</div>
+      <div class="card-title">계약 절차 (11단계)</div>
       <div id="steps-list"></div>
     </div>
   </div>
@@ -137,11 +160,110 @@ textarea{min-height:72px;}
       <div id="items-list"></div>
     </div>
   </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="card">
+      <div class="card-title">연락처 설정</div>
+      <div class="fr">
+        <div class="fg"><label>문의 라벨 (한국어)</label><input type="text" id="contact-label-ko" placeholder="입주 문의"></div>
+        <div class="fg"><label>Inquiry Label (EN)</label><input type="text" id="contact-label-en" placeholder="Inquiries"></div>
+      </div>
+      <div class="fg"><label>문의 받을 이메일</label><input type="text" id="contact-email" placeholder="jklee@homes.global"></div>
+      <div class="fg" style="margin-top:12px;"><label>문의 전화번호 (선택)</label><input type="text" id="contact-phone" placeholder="비워두면 표시되지 않습니다"></div>
+      <div class="hint">홈 화면 하단 고정 문의 바와, 계약 절차·FAQ·계산기 페이지의 문의하기 버튼에 모두 반영됩니다.</div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveContact()">저장</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">섹션 · 페이지 노출 설정</div>
+      <div class="hint" style="margin-bottom:12px;">체크를 해제하면 공개 사이트에서 해당 섹션 또는 페이지 메뉴가 숨겨집니다.</div>
+      <label style="display:block;margin-bottom:8px;">홈 화면 섹션</label>
+      <div class="fr" style="margin-bottom:16px;">
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-sec-yt" checked><div class="sl"></div></label>영상 섹션</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-sec-info" checked><div class="sl"></div></label>기본 정보</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-sec-spaces" checked><div class="sl"></div></label>공용공간</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-sec-rooms" checked><div class="sl"></div></label>호실 타입 카드</div>
+      </div>
+      <label style="display:block;margin-bottom:8px;">공개 페이지</label>
+      <div class="fr">
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-page-roommap" checked><div class="sl"></div></label>공실현황</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-page-calc" checked><div class="sl"></div></label>임대료 계산하기</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-page-process" checked><div class="sl"></div></label>계약 절차</div>
+        <div class="sw-row"><label class="sw"><input type="checkbox" id="vis-page-info" checked><div class="sl"></div></label>FAQ</div>
+      </div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveVisibility()">저장</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">임대료 계산기 설정</div>
+      <div class="fr">
+        <div class="fg"><label>단기 임대료 (4~9개월, 원/월)</label><input type="text" id="cfg-rate-short"></div>
+        <div class="fg"><label>장기 임대료 (10개월↑, 원/월)</label><input type="text" id="cfg-rate-long"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>고정관리비 (원/월)</label><input type="text" id="cfg-mgmt"></div>
+        <div class="fg"><label>퇴실청소비 (원, 1회)</label><input type="text" id="cfg-clean"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>보증금 합계 (원)</label><input type="text" id="cfg-dep-total"></div>
+        <div class="fg"><label>계약금 (계약 시, 원)</label><input type="text" id="cfg-dep1"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>잔금 (입주 시, 원)</label><input type="text" id="cfg-dep2"></div>
+        <div class="fg"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>최소 계약 개월수</label><input type="text" id="cfg-min-m"></div>
+        <div class="fg"><label>최대 계약 개월수</label><input type="text" id="cfg-max-m"></div>
+      </div>
+      <div class="fg" style="margin-bottom:12px;"><label>장기 프로모션 기준 개월수 (이상)</label><input type="text" id="cfg-lt-m"></div>
+      <div class="sw-row"><label class="sw"><input type="checkbox" id="cfg-promo-enabled" checked><div class="sl"></div></label>장기 프로모션 사용</div>
+      <div class="hint" style="margin-top:6px;">끄면 장기 계약도 단기 임대료로 계산되고, 프로모션 팝업이 표시되지 않습니다.</div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveCalcConfig()">저장</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">공실현황 관리</div>
+      <div class="sw-row" style="margin-bottom:14px;">
+        <label class="sw"><input type="checkbox" id="room-mode-toggle" onchange="onModeToggle()"><div class="sl"></div></label>
+        <span id="room-mode-label">자동 모드 (구글시트 연동)</span>
+      </div>
+      <div class="hint" style="margin-bottom:14px;">자동 모드: 구글시트 "안암_dash" 탭의 공실 여부만 가져와 표시합니다 (계약 가능 예정 상태 없음). 수동 모드: 아래에서 호실별 상태를 직접 지정합니다.</div>
+
+      <label style="display:block;margin-bottom:8px;">타입별 투어 가능 (수동 모드에서만 공개 사이트에 표시)</label>
+      <div class="fr" style="margin-bottom:8px;">
+        <div class="fg"><label>워크형</label><input type="text" id="tour-work" placeholder="0"></div>
+        <div class="fg"><label>수납강화형</label><input type="text" id="tour-walkin" placeholder="0"></div>
+      </div>
+      <div class="fr" style="margin-bottom:16px;">
+        <div class="fg"><label>풀퍼니시드형</label><input type="text" id="tour-full" placeholder="0"></div>
+        <div class="fg"><label>멀티형</label><input type="text" id="tour-multi" placeholder="0"></div>
+      </div>
+
+      <label style="display:block;margin-bottom:8px;">호실별 상태 (수동 모드)</label>
+      <div style="max-height:420px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;" id="roommap-table-wrap">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+          <thead style="position:sticky;top:0;background:#fff;">
+            <tr style="border-bottom:1px solid var(--line);">
+              <th style="text-align:left;padding:8px 10px;">호실</th>
+              <th style="text-align:left;padding:8px 10px;">타입</th>
+              <th style="text-align:left;padding:8px 10px;">상태</th>
+              <th style="text-align:left;padding:8px 10px;">계약 가능 예정일</th>
+              <th style="text-align:left;padding:8px 10px;">자동연동 값</th>
+            </tr>
+          </thead>
+          <tbody id="roommap-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;"><button class="btn btn-gold" onclick="saveRoomMap()">전체 저장</button></div>
+    </div>
+  </div>
 </div>
 <div id="toast"></div>
 
 <script>
-const SB=supabase.createClient('https://zyeumxtemfmkbpviuxeo.supabase.co','sb_publishable_TuH7QP5ejpplWGn9OiSz3w_joV0ffWJ');
+const SB=supabase.createClient(ANAM_CONFIG.url,ANAM_CONFIG.key);
 let openAcc={sp:null,rm:null,st:null,it:null};
 let popupData=[],infoData=[],spacesData=[],roomsData=[],stepsData=[],colsData=[],itemsData=[];
 
@@ -289,29 +411,18 @@ function renderRooms(){
   document.getElementById('rooms-list').innerHTML=roomsData.map((r,i)=>`
     <div class="acc-item">
       <div class="acc-head" onclick="tog('rm',${i})">
-        <div class="acc-num" style="background:${r.badge_no_vacancy?'#e53e3e':r.badge_contract?'#1a56db':r.badge_tour?'#22863a':'var(--line)'};color:${(r.badge_no_vacancy||r.badge_contract||r.badge_tour)?'#fff':'var(--muted)'};">${i+1}</div>
+        <div class="acc-num">${i+1}</div>
         <div class="acc-info"><div class="acc-name">${esc(r.name_ko)}</div><div class="acc-sub">${esc(r.type_en)}</div></div>
-        <div style="display:flex;gap:5px;margin-right:8px;">
-          ${r.badge_tour?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#22863a;color:#fff;">투어 가능</span>':''}
-          ${r.badge_contract?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#1a56db;color:#fff;">계약 가능</span>':''}
-          ${r.badge_no_vacancy?'<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#e53e3e;color:#fff;">공실 없음</span>':''}
-        </div>
         <svg class="chv${openAcc.rm===i?' open':''}" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <div class="acc-body${openAcc.rm===i?' open':''}">
-        <div style="margin-bottom:14px;"><label style="display:block;margin-bottom:8px;">배지 설정</label>
-          <div class="badge-row">
-            <div class="btog${r.badge_tour?' on-tour':''}" onclick="roomsData[${i}].badge_tour=!roomsData[${i}].badge_tour;openAcc.rm=${i};renderRooms()">투어 가능 · Tour Available</div>
-            <div class="btog${r.badge_contract?' on-contract':''}" onclick="roomsData[${i}].badge_contract=!roomsData[${i}].badge_contract;openAcc.rm=${i};renderRooms()">계약 가능 · Contract Available</div>
-            <div class="btog${r.badge_no_vacancy?' on-novacancy':''}" onclick="roomsData[${i}].badge_no_vacancy=!roomsData[${i}].badge_no_vacancy;openAcc.rm=${i};renderRooms()">공실 없음 · No Vacancy</div>
-          </div>
-        </div>
+        <div class="hint" style="margin-bottom:12px;">계약 가능·투어 가능·공실 없음 배지는 [운영 설정 → 공실현황 관리] 데이터를 기준으로 홈 화면에서 자동 계산되어 표시됩니다. 이 화면에서 별도로 설정할 필요가 없습니다.</div>
         <div class="fr"><div class="fg"><label>임대료 (한국어)</label><input type="text" value="${esc(r.rent_ko)}" onchange="roomsData[${i}].rent_ko=this.value"></div><div class="fg"><label>Rent (EN)</label><input type="text" value="${esc(r.rent_en)}" onchange="roomsData[${i}].rent_en=this.value"></div></div>
         <div class="fr"><div class="fg"><label>사진 1 URL</label><input type="url" value="${esc(r.img1)}" onchange="roomsData[${i}].img1=this.value"></div><div class="fg"><label>사진 2 URL</label><input type="url" value="${esc(r.img2)}" onchange="roomsData[${i}].img2=this.value"></div></div>
         <div style="margin-top:12px;display:flex;justify-content:flex-end;"><button class="btn btn-gold btn-sm" onclick="saveRoom(${i})">저장</button></div>
       </div>
     </div>`).join('');}
-async function saveRoom(i){const r=roomsData[i];const{error}=await SB.from('anam_rooms').update({badge_tour:r.badge_tour,badge_contract:r.badge_contract,badge_no_vacancy:r.badge_no_vacancy,rent_ko:r.rent_ko,rent_en:r.rent_en,img1:r.img1,img2:r.img2}).eq('id',r.id);if(error)toast('오류: '+error.message,'err');else toast('저장됨','ok');}
+async function saveRoom(i){const r=roomsData[i];const{error}=await SB.from('anam_rooms').update({rent_ko:r.rent_ko,rent_en:r.rent_en,img1:r.img1,img2:r.img2}).eq('id',r.id);if(error)toast('오류: '+error.message,'err');else toast('저장됨','ok');}
 
 /* ── STEPS ── */
 async function loadSteps(){const{data}=await SB.from('anam_steps').select('*').order('sort_order');stepsData=data||[];renderSteps();}
@@ -392,13 +503,186 @@ async function saveItem(i){const item=itemsData[i];const{error}=await SB.from('a
 async function deleteItem(id,i){await SB.from('anam_detail_items').delete().eq('id',id);itemsData.splice(i,1);renderItems();toast('삭제됨');}
 async function moveItem(i,dir){const n=i+dir;if(n<0||n>=itemsData.length)return;[itemsData[i].sort_order,itemsData[n].sort_order]=[itemsData[n].sort_order,itemsData[i].sort_order];await SB.from('anam_detail_items').update({sort_order:itemsData[i].sort_order}).eq('id',itemsData[i].id);await SB.from('anam_detail_items').update({sort_order:itemsData[n].sort_order}).eq('id',itemsData[n].id);[itemsData[i],itemsData[n]]=[itemsData[n],itemsData[i]];renderItems();}
 
+/* ── SETTINGS: contact ── */
+async function loadContact(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','contact').single();
+  let c={label_ko:'입주 문의',label_en:'Inquiries',email:'jklee@homes.global'};
+  if(data){try{c={...c,...JSON.parse(data.value)};}catch(e){}}
+  document.getElementById('contact-label-ko').value=c.label_ko;
+  document.getElementById('contact-label-en').value=c.label_en;
+  document.getElementById('contact-email').value=c.email;
+  document.getElementById('contact-phone').value=c.phone||'';
+}
+async function saveContact(){
+  const c={
+    label_ko:document.getElementById('contact-label-ko').value,
+    label_en:document.getElementById('contact-label-en').value,
+    email:document.getElementById('contact-email').value,
+    phone:document.getElementById('contact-phone').value
+  };
+  const{error}=await SB.from('anam_settings').upsert({key:'contact',value:JSON.stringify(c)});
+  if(error)toast('오류: '+error.message,'err');else toast('연락처 저장됨','ok');
+}
+
+/* ── SETTINGS: visibility ── */
+const VIS_IDS=['sec-yt','sec-info','sec-spaces','sec-rooms','page-roommap','page-calc','page-process','page-info'];
+async function loadVisibility(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
+  let v={};VIS_IDS.forEach(k=>v[k.replace('-','_')]=true);
+  if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
+  VIS_IDS.forEach(k=>{const el=document.getElementById('vis-'+k);if(el)el.checked=v[k.replace('-','_')]!==false;});
+}
+async function saveVisibility(){
+  const v={};VIS_IDS.forEach(k=>{v[k.replace('-','_')]=document.getElementById('vis-'+k).checked;});
+  const{error}=await SB.from('anam_settings').upsert({key:'visibility',value:JSON.stringify(v)});
+  if(error)toast('오류: '+error.message,'err');else toast('노출 설정 저장됨','ok');
+}
+
+/* ── SETTINGS: rent calculator config ── */
+async function loadCalcConfig(){
+  const{data}=await SB.from('anam_settings').select('value').eq('key','calc_config').single();
+  let c={rate_short:1350000,rate_long:1200000,mgmt:259000,clean:120000,deposit_total:2000000,deposit1:1000000,deposit2:1000000,min_months:4,max_months:12,lt_months:10,promo_enabled:true};
+  if(data){try{c={...c,...JSON.parse(data.value)};}catch(e){}}
+  document.getElementById('cfg-rate-short').value=c.rate_short;
+  document.getElementById('cfg-rate-long').value=c.rate_long;
+  document.getElementById('cfg-mgmt').value=c.mgmt;
+  document.getElementById('cfg-clean').value=c.clean;
+  document.getElementById('cfg-dep-total').value=c.deposit_total;
+  document.getElementById('cfg-dep1').value=c.deposit1;
+  document.getElementById('cfg-dep2').value=c.deposit2;
+  document.getElementById('cfg-min-m').value=c.min_months;
+  document.getElementById('cfg-max-m').value=c.max_months;
+  document.getElementById('cfg-lt-m').value=c.lt_months;
+  document.getElementById('cfg-promo-enabled').checked=!!c.promo_enabled;
+}
+async function saveCalcConfig(){
+  const num=id=>Number(document.getElementById(id).value)||0;
+  const c={
+    rate_short:num('cfg-rate-short'),rate_long:num('cfg-rate-long'),
+    mgmt:num('cfg-mgmt'),clean:num('cfg-clean'),
+    deposit_total:num('cfg-dep-total'),deposit1:num('cfg-dep1'),deposit2:num('cfg-dep2'),
+    min_months:num('cfg-min-m'),max_months:num('cfg-max-m'),lt_months:num('cfg-lt-m'),
+    promo_enabled:document.getElementById('cfg-promo-enabled').checked
+  };
+  const{error}=await SB.from('anam_settings').upsert({key:'calc_config',value:JSON.stringify(c)});
+  if(error)toast('오류: '+error.message,'err');else toast('계산기 설정 저장됨','ok');
+}
+
+/* ── SETTINGS: room status map ── */
+const ROOM_TYPE_MAP={
+  301:'full',302:'full',303:'walkin',304:'full',305:'multi',306:'full',307:'full',308:'work',309:'full',310:'full',
+  401:'full',402:'full',403:'walkin',404:'full',405:'work',406:'full',407:'full',408:'walkin',409:'full',410:'full',
+  501:'work',502:'walkin',503:'walkin',504:'full',505:'work',506:'multi',507:'work',508:'walkin',509:'multi',510:'walkin',
+  601:'work',602:'walkin',603:'walkin',604:'full',605:'work',606:'multi',607:'work',608:'walkin',609:'multi',610:'walkin',
+  701:'work',702:'walkin',703:'walkin',704:'full',705:'work',706:'multi',707:'work',708:'walkin',709:'walkin',710:'walkin',
+  801:'work',802:'walkin',803:'walkin',804:'full',805:'full',806:'full',807:'full',808:'walkin',809:'walkin',810:'walkin'
+};
+const TYPE_NAMES={work:'워크형',walkin:'수납강화형',full:'풀퍼니시드형',multi:'멀티형'};
+let roomMapData={}; // room_no -> {manual_status, manual_available_from, auto_status, auto_updated_at}
+let roomMode='auto';
+
+async function loadRoomMap(){
+  const[{data:rows},{data:settings}]=await Promise.all([
+    SB.from('anam_room_map').select('*'),
+    SB.from('anam_settings').select('key,value').in('key',['room_status_mode','tour_availability'])
+  ]);
+  (rows||[]).forEach(r=>roomMapData[r.room_no]=r);
+  Object.keys(ROOM_TYPE_MAP).forEach(n=>{if(!roomMapData[n])roomMapData[n]={room_no:Number(n),manual_status:'occupied',manual_available_from:null,auto_status:null};});
+  let tour={work:0,walkin:0,full:0,multi:0};
+  (settings||[]).forEach(s=>{
+    if(s.key==='room_status_mode')roomMode=(s.value==='manual')?'manual':'auto';
+    if(s.key==='tour_availability'){try{tour={...tour,...JSON.parse(s.value)};}catch(e){}}
+  });
+  document.getElementById('room-mode-toggle').checked=(roomMode==='manual');
+  document.getElementById('room-mode-label').textContent=roomMode==='manual'?'수동 모드 (직접 입력)':'자동 모드 (구글시트 연동)';
+  document.getElementById('tour-work').value=tour.work||0;
+  document.getElementById('tour-walkin').value=tour.walkin||0;
+  document.getElementById('tour-full').value=tour.full||0;
+  document.getElementById('tour-multi').value=tour.multi||0;
+  renderRoomMapTable();
+}
+
+function renderRoomMapTable(){
+  const roomNos=Object.keys(ROOM_TYPE_MAP).map(Number).sort((a,b)=>a-b);
+  document.getElementById('roommap-tbody').innerHTML=roomNos.map(n=>{
+    const r=roomMapData[n];
+    const type=TYPE_NAMES[ROOM_TYPE_MAP[n]];
+    const status=r.manual_status||'occupied';
+    return`<tr style="border-bottom:1px solid var(--line);">
+      <td style="padding:6px 10px;font-weight:700;">${n}</td>
+      <td style="padding:6px 10px;color:var(--muted);">${type}</td>
+      <td style="padding:6px 10px;">
+        <select onchange="roomMapData[${n}].manual_status=this.value;renderRoomMapTable()" style="font-size:12px;padding:5px 8px;">
+          <option value="occupied"${status==='occupied'?' selected':''}>재실 중</option>
+          <option value="vacant"${status==='vacant'?' selected':''}>계약 가능</option>
+          <option value="upcoming"${status==='upcoming'?' selected':''}>계약 가능 예정</option>
+        </select>
+      </td>
+      <td style="padding:6px 10px;">
+        ${status==='upcoming'?`<input type="date" value="${r.manual_available_from||''}" onchange="roomMapData[${n}].manual_available_from=this.value" style="font-size:12px;padding:5px 8px;">`:'<span style="color:var(--line);">—</span>'}
+      </td>
+      <td style="padding:6px 10px;color:var(--muted);">${r.auto_status==='vacant'?'공실':r.auto_status==='occupied'?'재실중':'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function onModeToggle(){
+  roomMode=document.getElementById('room-mode-toggle').checked?'manual':'auto';
+  document.getElementById('room-mode-label').textContent=roomMode==='manual'?'수동 모드 (직접 입력)':'자동 모드 (구글시트 연동)';
+  const{error}=await SB.from('anam_settings').upsert({key:'room_status_mode',value:roomMode});
+  if(error)toast('오류: '+error.message,'err');else toast('공실현황 모드 변경됨','ok');
+}
+
+async function saveRoomMap(){
+  const tour={
+    work:Number(document.getElementById('tour-work').value)||0,
+    walkin:Number(document.getElementById('tour-walkin').value)||0,
+    full:Number(document.getElementById('tour-full').value)||0,
+    multi:Number(document.getElementById('tour-multi').value)||0
+  };
+  const rows=Object.values(roomMapData).map(r=>({
+    room_no:r.room_no,
+    floor:Math.floor(r.room_no/100),
+    manual_status:r.manual_status||'occupied',
+    manual_available_from:r.manual_status==='upcoming'?(r.manual_available_from||null):null
+  }));
+  const[{error:e1},{error:e2}]=await Promise.all([
+    SB.from('anam_room_map').upsert(rows,{onConflict:'room_no'}),
+    SB.from('anam_settings').upsert({key:'tour_availability',value:JSON.stringify(tour)})
+  ]);
+  if(e1||e2)toast('오류: '+((e1||e2).message),'err');else toast('공실현황 저장됨','ok');
+}
+
 /* ── INIT ── */
 async function init(){
   await Promise.all([loadPopup(),loadYT(),loadInfo(),loadSpaces(),loadRooms(),loadSteps()]);
   await loadCols();
   await loadItems();
+  await Promise.all([loadContact(),loadVisibility(),loadCalcConfig(),loadRoomMap()]);
 }
-init();
+/* ── 로그인 게이트 (Supabase Auth 이메일+비밀번호, 관리자 이메일은 anam_admins 테이블 기준) ── */
+let _inited=false;
+function showGate(msg){document.getElementById('loginGate').style.display='flex';document.getElementById('lgErr').textContent=msg||'';document.getElementById('lgBtn').disabled=false;}
+async function enterIfAdmin(){
+  const {data:{session}}=await SB.auth.getSession();
+  if(!session){showGate('');return;}
+  const {data:ok,error}=await SB.rpc('anam_is_admin');
+  if(error||ok!==true){await SB.auth.signOut();showGate('관리자 권한이 없는 계정입니다.');return;}
+  document.getElementById('loginGate').style.display='none';
+  if(!_inited){_inited=true;await init();}
+}
+async function doLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById('lgBtn');btn.disabled=true;
+  document.getElementById('lgErr').textContent='';
+  const {error}=await SB.auth.signInWithPassword({email:document.getElementById('lgEmail').value.trim(),password:document.getElementById('lgPw').value});
+  document.getElementById('lgPw').value='';
+  if(error){showGate('로그인 실패: 이메일/비밀번호를 확인해 주세요.');return;}
+  await enterIfAdmin();
+}
+async function doLogout(){await SB.auth.signOut();location.reload();}
+async function boot(){try{await enterIfAdmin();}catch(err){showGate('오류: '+err.message);}}
+boot();
 </script>
 </body>
 </html>

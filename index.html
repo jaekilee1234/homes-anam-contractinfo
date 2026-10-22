@@ -11,7 +11,7 @@
 <style>
 :root{
   --gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;
-  --gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;
+  --gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#6B6B6B;
   --font:'Outfit','Pretendard',-apple-system,sans-serif;
   --max:880px;--px:72px;--px-m:24px;
   --footer-h:62px;
@@ -53,6 +53,11 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .hero-headline{font-size:clamp(32px,5vw,52px);font-weight:900;color:#fff;line-height:1.15;letter-spacing:-0.03em;margin-bottom:10px;}
 .hero-headline em{color:var(--gold);font-style:normal;}
 .hero-sub{font-size:15px;color:rgba(255,255,255,.62);font-weight:400;letter-spacing:.01em;}
+.hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+.hero-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,.4);transition:.15s;}
+.hero-btn:hover{background:rgba(255,255,255,.1);}
+.hero-btn.primary{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+.hero-btn.primary:hover{background:#ffd93a;}
 /* LABELS */
 .s-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 .s-title{font-size:22px;font-weight:800;line-height:1.3;margin-bottom:4px;color:var(--ink);}
@@ -102,6 +107,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .space-name{font-size:20px;font-weight:800;margin-bottom:12px;line-height:1.3;}
 .space-desc{font-size:14px;color:#555;line-height:1.85;margin-bottom:16px;}
 .space-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.lang-ko .space-tags.ko,.lang-en .space-tags.en{display:flex;}
 .space-tag{padding:4px 12px;border-radius:6px;background:var(--soft);font-size:11.5px;font-weight:600;color:var(--muted);border:1px solid var(--line);}
 /* ROOMS */
 .rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px;}
@@ -193,6 +199,17 @@ span.ko,span.en{display:none;}
   .contact-bar-label{display:none;}
   .contact-bar-divider{display:none;}
 }
+
+/* ── 2026-10 design refresh: common ── */
+a:focus-visible,button:focus-visible,input:focus-visible,.acc-head:focus-visible,.col-tab:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+@media(max-width:720px){
+  nav{height:auto;display:grid;grid-template-columns:1fr auto;grid-template-areas:"logo lang" "links links";grid-template-rows:52px 40px;padding:0 24px;}
+  .nav-logo{grid-area:logo;}
+  .lang-toggle{grid-area:lang;justify-self:end;}
+  .nav-links{grid-area:links;justify-content:space-between;overflow-x:auto;gap:0;border-top:1px solid var(--line);margin:0 -24px;padding:0 18px;}
+  .nav-link{display:flex;align-items:center;height:100%;padding:0 6px;font-size:12.5px;border-radius:0;}
+  .nav-link.active{color:var(--ink);box-shadow:inset 0 -2px 0 var(--gold);}
+}
 </style>
 </head>
 <body class="lang-ko">
@@ -230,6 +247,10 @@ span.ko,span.en{display:none;}
     <div class="hero-headline en">Live your <em>Life</em></div>
     <div class="hero-sub ko" style="margin-top:14px;">홈즈 안암에서 나만의 일상을 시작하세요</div>
     <div class="hero-sub en" style="margin-top:14px;">Start your own daily rhythm at HOMES Anam</div>
+    <div class="hero-cta">
+      <a class="hero-btn primary" id="cta-roommap" href="roommap.html"><span class="ko">공실 확인하기</span><span class="en">Check Availability</span></a>
+      <a class="hero-btn" id="cta-calc" href="calc.html"><span class="ko">임대료 계산하기</span><span class="en">Estimate Rent</span></a>
+    </div>
   </div>
 </div>
 
@@ -341,7 +362,7 @@ async function applyVisibility(){
   if(data){try{v={...v,...JSON.parse(data.value)};}catch(e){}}
   const map={'sec-yt':v.sec_yt,'sec-info':v.sec_info,'sec-spaces':v.sec_spaces,'sec-rooms':v.sec_rooms};
   Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=map[id]?'':'none';});
-  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-calc':v.page_calc,'navlink-roommap':v.page_roommap};
+  const navMap={'navlink-process':v.page_process,'navlink-info':v.page_info,'navlink-calc':v.page_calc,'navlink-roommap':v.page_roommap,'cta-calc':v.page_calc,'cta-roommap':v.page_roommap};
   Object.keys(navMap).forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=navMap[id]?'':'none';});
 }
 async function loadContact(){

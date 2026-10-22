@@ -9,12 +9,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <style>
-:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#6B6B6B;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--soft);color:var(--ink);-webkit-font-smoothing:antialiased;}
 nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;}
-.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
-.nav-logo span{color:#1a1a1a;font-weight:700;}
+.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:var(--gold);text-decoration:none;}
+.nav-logo span{color:#444;font-weight:700;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
 .nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
 .nav-link:hover,.nav-link.active{color:var(--ink);}
@@ -30,9 +30,9 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .calc-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;}
 .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .calc-fg{display:flex;flex-direction:column;gap:6px;}
-.calc-fg label{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;display:flex;align-items:center;gap:6px;}
+.calc-fg label{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.02em;display:flex;align-items:center;gap:6px;min-height:24px;}
 .pill{display:inline-block;background:var(--soft);border:1px solid var(--line);color:var(--gray);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:0;text-transform:none;}
-.calc-fg input[type=date]{font-family:var(--font);font-size:13.5px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%;}
+.calc-fg input[type=date]{font-family:var(--font);font-size:15px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%;}
 .calc-fg input:focus{outline:none;border-color:var(--navy);}
 .calc-btn-row{margin-top:18px;display:flex;justify-content:flex-end;}
 .calc-btn{padding:11px 26px;border:none;border-radius:9px;background:var(--navy);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;font-family:var(--font);}
@@ -63,7 +63,7 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .calc-deposit{background:var(--soft);border-radius:10px;padding:14px 16px;font-size:12.5px;margin-top:16px;}
 .calc-deposit .row{display:flex;justify-content:space-between;padding:4px 0;gap:8px;}
 .calc-deposit .row.tot{font-weight:700;border-top:1px solid var(--line);margin-top:6px;padding-top:8px;}
-.calc-note{background:var(--soft);border-radius:10px;padding:13px 15px;font-size:11.5px;color:var(--muted);margin-top:16px;line-height:1.7;}
+.calc-note{background:var(--soft);border-radius:10px;padding:13px 15px;font-size:12.5px;color:var(--muted);margin-top:16px;line-height:1.7;}
 .calc-cta{display:flex;justify-content:center;margin-top:22px;}
 .calc-cta a{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:40px;background:var(--gold);color:var(--navy);font-weight:800;font-size:13.5px;text-decoration:none;transition:.15s;}
 .calc-cta a:hover{background:#e6ba00;}
@@ -93,6 +93,29 @@ span.ko,span.en{display:none;}
   .nav-link{padding:7px 8px;font-size:11.5px;}
   .main{padding:28px 20px 80px;}.hero{padding:36px 20px 32px;}.calc-grid{grid-template-columns:1fr;}
 }
+
+/* ── 2026-10 design refresh: common ── */
+a:focus-visible,button:focus-visible,input:focus-visible,.acc-head:focus-visible,.col-tab:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+@media(max-width:720px){
+  nav{height:auto;display:grid;grid-template-columns:1fr auto;grid-template-areas:"logo lang" "links links";grid-template-rows:52px 40px;padding:0 20px;}
+  .nav-logo{grid-area:logo;}
+  .lang-toggle{grid-area:lang;justify-self:end;}
+  .nav-links{grid-area:links;justify-content:space-between;overflow-x:auto;gap:0;border-top:1px solid var(--line);margin:0 -20px;padding:0 14px;}
+  .nav-link{display:flex;align-items:center;height:100%;padding:0 6px;font-size:12.5px;border-radius:0;}
+  .nav-link.active{color:var(--ink);box-shadow:inset 0 -2px 0 var(--gold);}
+}
+
+.float-btn{transition:transform .25s ease,opacity .25s ease,background .15s;}
+.float-btn.hide{transform:translateY(90px);opacity:0;pointer-events:none;}
+@media(max-width:720px){.float-btn{bottom:16px;right:16px;padding:9px 16px;font-size:12.5px;}}
+.rate-guide{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;}
+.rg-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:12px;}
+.rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;}
+.rg-item{display:flex;flex-direction:column;gap:2px;padding:10px 12px;background:var(--soft);border-radius:10px;}
+.rg-lbl{font-size:12px;font-weight:700;color:var(--muted);}
+.rg-val{font-size:15px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;}
+.rg-foot{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.6;}
+@media(max-width:480px){.rg-grid{grid-template-columns:1fr;}.rate-guide{padding:16px;}}
 </style>
 </head>
 <body class="lang-ko">
@@ -164,6 +187,7 @@ span.ko,span.en{display:none;}
       </div>
     </div>
   </div>
+  <div class="rate-guide" id="rate-guide"></div>
 </div>
 
 <div class="promo-overlay" id="promo-overlay">
@@ -202,7 +226,25 @@ async function loadConfig(){
   });
   const btn=document.getElementById('contact-float');
   btn.href='mailto:'+CONTACT.email;
+  renderRateGuide();
 }
+
+/* ── rate guide (reads the same admin-editable CFG as the calculator) ── */
+function renderRateGuide(){
+  const el=document.getElementById('rate-guide');if(!el)return;
+  const won=n=>fmt(n)+'원', krw=n=>fmt(n)+' KRW';
+  const items=[];
+  const shortTo=CFG.promo_enabled?(CFG.lt_months-1):CFG.max_months;
+  items.push({ko:CFG.min_months+'~'+shortTo+'개월 월 임대료',en:'Monthly rent ('+CFG.min_months+'–'+shortTo+' months)',kov:won(CFG.rate_short),env:krw(CFG.rate_short)});
+  if(CFG.promo_enabled)items.push({ko:CFG.lt_months+'개월 이상 월 임대료 (장기 프로모션)',en:'Monthly rent ('+CFG.lt_months+'+ months, long-term promo)',kov:won(CFG.rate_long),env:krw(CFG.rate_long)});
+  items.push({ko:'월 관리비',en:'Monthly utilities',kov:won(CFG.mgmt),env:krw(CFG.mgmt)});
+  items.push({ko:'퇴실청소비 (1회)',en:'Move-out cleaning (one-time)',kov:won(CFG.clean),env:krw(CFG.clean)});
+  items.push({ko:'보증금',en:'Deposit',kov:won(CFG.deposit_total),env:krw(CFG.deposit_total)});
+  el.innerHTML='<div class="rg-title"><span class="ko">요금 기준</span><span class="en">Rate guide</span></div><div class="rg-grid">'+
+    items.map(i=>'<div class="rg-item"><span class="rg-lbl"><span class="ko">'+i.ko+'</span><span class="en">'+i.en+'</span></span><span class="rg-val"><span class="ko">'+i.kov+'</span><span class="en">'+i.env+'</span></span></div>').join('')+
+    '</div><div class="rg-foot"><span class="ko">위 금액은 계산 기준이며, 실제 계약 조건은 계약서를 따릅니다.</span><span class="en">These are the figures used for the estimate; final terms follow the contract.</span></div>';
+}
+renderRateGuide();
 
 async function applyNavVisibility(){
   const{data}=await SB.from('anam_settings').select('value').eq('key','visibility').single();
@@ -414,6 +456,14 @@ applyNavVisibility();
   });
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
+</script>
+<script>
+/* floating contact button: hide while scrolling down on mobile, show on scroll up / near bottom */
+(function(){var b=document.getElementById('contact-float');if(!b)return;var last=window.pageYOffset||0;
+function upd(){var y=window.pageYOffset||0;var near=(window.innerHeight+y)>=document.documentElement.scrollHeight-80;
+if(window.innerWidth<=720){if(y>last+6&&y>120&&!near)b.classList.add('hide');else if(y<last-6||near||y<=120)b.classList.remove('hide');}else{b.classList.remove('hide');}
+last=y;}
+window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);})();
 </script>
 </body>
 </html>

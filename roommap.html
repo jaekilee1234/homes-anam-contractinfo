@@ -9,12 +9,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <style>
-:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#888;--occ:#C7CCD1;--up:#F2994A;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
+:root{--gold:#FFCF0D;--navy:#020425;--cream:#F4F2EC;--line:#E7DDC6;--gray:#6F7A83;--soft:#f8f8f6;--ink:#2d2d2d;--muted:#6B6B6B;--occ:#C7CCD1;--up:#F2994A;--font:'Outfit','Pretendard',-apple-system,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--soft);color:var(--ink);-webkit-font-smoothing:antialiased;}
 nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 48px;}
-.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:#1a1a1a;text-decoration:none;}
-.nav-logo span{color:#1a1a1a;font-weight:700;}
+.nav-logo{font-weight:900;font-size:19px;letter-spacing:-0.04em;color:var(--gold);text-decoration:none;}
+.nav-logo span{color:#444;font-weight:700;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;}
 .nav-link{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:.15s;font-family:var(--font);white-space:nowrap;}
 .nav-link:hover,.nav-link.active{color:var(--ink);}
@@ -30,15 +30,17 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 
 .stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px;}
 .stat-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 22px;flex:1;min-width:160px;}
-.stat-num{font-size:26px;font-weight:900;color:var(--navy);letter-spacing:-0.02em;}
-.stat-lbl{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-top:2px;}
+.stat-num{font-size:28px;font-weight:900;color:var(--navy);letter-spacing:-0.02em;}
+.stat-num span{font-size:14px;font-weight:700;margin-left:3px;color:var(--gray);letter-spacing:0;}
+.stat-empty{flex-basis:100%;background:var(--soft);border:1px dashed var(--line);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--gray);line-height:1.6;}
+.stat-lbl{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-top:2px;}
 
 .type-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:30px;}
 .type-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 14px;}
-.type-card-code{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.type-card-code{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
 .type-card-name{font-size:13.5px;font-weight:800;margin-top:2px;margin-bottom:9px;}
 .type-badges{display:flex;flex-wrap:wrap;gap:5px;}
-.tbadge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.tbadge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
 .tbadge.contract{background:var(--gold);color:var(--navy);}
 .tbadge.tour{background:var(--navy);color:#fff;}
 .tbadge.none{background:var(--soft);color:var(--muted);border:1px solid var(--line);}
@@ -48,14 +50,14 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.92);backdrop-
 .legend-sw{width:13px;height:13px;border-radius:4px;}
 
 .floor-block{margin-bottom:22px;}
-.floor-title{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;}
+.floor-title{font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;}
 .room-row{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;}
 .room-cell{position:relative;aspect-ratio:1/1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:default;transition:transform .12s;}
 .room-cell.vacant{background:var(--gold);color:var(--navy);}
-.room-cell.occupied{background:var(--occ);color:#5b6268;}
+.room-cell.occupied{background:var(--occ);color:#434A50;}
 .room-cell.upcoming{background:var(--up);color:#fff;cursor:pointer;}
 .room-no{font-size:13px;font-weight:800;letter-spacing:-0.01em;}
-.room-type-lbl{font-size:8.5px;font-weight:700;opacity:.85;text-align:center;line-height:1.2;padding:0 2px;}
+.room-type-lbl{font-size:10px;font-weight:700;opacity:.9;text-align:center;line-height:1.2;padding:0 2px;}
 .room-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:11px;font-weight:600;padding:6px 10px;border-radius:7px;white-space:nowrap;z-index:5;opacity:0;pointer-events:none;transition:.15s;}
 .room-tip.show{opacity:1;}
 .room-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy);}
@@ -79,6 +81,22 @@ span.ko,span.en{display:none;}
   .nav-link{padding:7px 8px;font-size:11.5px;}
   .main{padding:24px 20px 80px;}.hero{padding:36px 20px 32px;}
 }
+
+/* ── 2026-10 design refresh: common ── */
+a:focus-visible,button:focus-visible,input:focus-visible,.acc-head:focus-visible,.col-tab:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+@media(max-width:720px){
+  nav{height:auto;display:grid;grid-template-columns:1fr auto;grid-template-areas:"logo lang" "links links";grid-template-rows:52px 40px;padding:0 20px;}
+  .nav-logo{grid-area:logo;}
+  .lang-toggle{grid-area:lang;justify-self:end;}
+  .nav-links{grid-area:links;justify-content:space-between;overflow-x:auto;gap:0;border-top:1px solid var(--line);margin:0 -20px;padding:0 14px;}
+  .nav-link{display:flex;align-items:center;height:100%;padding:0 6px;font-size:12.5px;border-radius:0;}
+  .nav-link.active{color:var(--ink);box-shadow:inset 0 -2px 0 var(--gold);}
+}
+
+.float-btn{transition:transform .25s ease,opacity .25s ease,background .15s;}
+.float-btn.hide{transform:translateY(90px);opacity:0;pointer-events:none;}
+@media(max-width:720px){.float-btn{bottom:16px;right:16px;padding:9px 16px;font-size:12.5px;}}
+@media(max-width:720px){.room-type-lbl{font-size:9.5px;}.room-no{font-size:14px;}}
 </style>
 </head>
 <body class="lang-ko">
@@ -184,10 +202,14 @@ function render(){
 function renderStats(){
   const roomNos=Object.keys(ROOM_TYPE_MAP).map(Number);
   const vacantCount=roomNos.filter(n=>statusOf(n)==='vacant').length;
-  let html=`<div class="stat-box"><div class="stat-num">${vacantCount}</div><div class="stat-lbl"><span class="ko">계약 가능 ${vacantCount}실</span><span class="en">${vacantCount} Rooms Available</span></div></div>`;
+  let tourTotal=0;
+  let html=`<div class="stat-box"><div class="stat-num">${vacantCount}<span class="ko">실</span><span class="en"> rooms</span></div><div class="stat-lbl"><span class="ko">계약 가능</span><span class="en">Available to lease</span></div></div>`;
   if(MODE==='manual'){
-    const tourTotal=TYPES.reduce((sum,t)=>sum+(TOUR_AVAIL[t.id]||0),0);
-    html+=`<div class="stat-box"><div class="stat-num">${tourTotal}</div><div class="stat-lbl"><span class="ko">투어 가능 ${tourTotal}실</span><span class="en">${tourTotal} Tours Available</span></div></div>`;
+    tourTotal=TYPES.reduce((sum,t)=>sum+(TOUR_AVAIL[t.id]||0),0);
+    html+=`<div class="stat-box"><div class="stat-num">${tourTotal}<span class="ko">실</span><span class="en"> rooms</span></div><div class="stat-lbl"><span class="ko">투어 가능</span><span class="en">Available for tours</span></div></div>`;
+  }
+  if(vacantCount===0&&tourTotal===0){
+    html+=`<div class="stat-empty"><span class="ko">현재 계약 가능한 호실이 없습니다. 최신 상황은 '문의하기'로 확인해 주세요.</span><span class="en">There are no rooms available to lease right now. Please use 'Contact Us' to check the latest availability.</span></div>`;
   }
   document.getElementById('stat-row').innerHTML=html;
 }
@@ -315,6 +337,14 @@ applyNavVisibility();
   });
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
 })();
+</script>
+<script>
+/* floating contact button: hide while scrolling down on mobile, show on scroll up / near bottom */
+(function(){var b=document.getElementById('contact-float');if(!b)return;var last=window.pageYOffset||0;
+function upd(){var y=window.pageYOffset||0;var near=(window.innerHeight+y)>=document.documentElement.scrollHeight-80;
+if(window.innerWidth<=720){if(y>last+6&&y>120&&!near)b.classList.add('hide');else if(y<last-6||near||y<=120)b.classList.remove('hide');}else{b.classList.remove('hide');}
+last=y;}
+window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);})();
 </script>
 </body>
 </html>
